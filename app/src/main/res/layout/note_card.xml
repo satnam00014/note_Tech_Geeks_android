@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     app:cardElevation="10dp"
     app:flow_maxElementsWrap="@android:integer/config_mediumAnimTime"
     android:id="@+id/invites_cardview"
@@ -10,8 +11,9 @@
     app:cardCornerRadius="10dp"
     android:alpha="0.8"
     android:clickable="true"
-    android:layout_margin="7dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:focusable="true"
+    android:foreground="@drawable/custom_ripple_card"
+    android:layout_margin="7dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/view1"

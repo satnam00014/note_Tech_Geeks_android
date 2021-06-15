@@ -2,6 +2,7 @@ package com.example.note_tech_geeks_android.RecyclerAdapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.note_tech_geeks_android.NoteListActivity;
 import com.example.note_tech_geeks_android.R;
 
 import java.util.List;
@@ -59,6 +61,8 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         Glide.with(context).load(R.drawable.folder_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText("Sample");
+
+        localCardView.setOnClickListener(v -> {context.startActivity(new Intent(context, NoteListActivity.class));});
     }
 
     @Override

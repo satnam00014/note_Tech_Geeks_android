@@ -10,6 +10,8 @@
     app:cardCornerRadius="10dp"
     android:alpha="0.8"
     android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/custom_ripple_card"
     android:layout_margin="7dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
