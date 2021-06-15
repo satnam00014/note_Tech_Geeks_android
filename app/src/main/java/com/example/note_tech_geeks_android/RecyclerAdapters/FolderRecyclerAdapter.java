@@ -34,7 +34,6 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         //following is passed to access titlebar or similar properties from adapter.
         this.folderActivity = folderActivity;
         //following is to set title of activity
-        folderActivity.setTitle(" 20 - Folders");
     }
 
     @Override
@@ -48,6 +47,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         //this is where where view in inflated and will return view holder with view(that means card)
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.folder_card, parent, false);
+        folderActivity.setTitle(" 20 - Folders");
         return new ViewHolder((CardView) view);
     }
 
