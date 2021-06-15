@@ -57,11 +57,12 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         //instance of card on which we are performing operations.
         CardView localCardView = holder.currentCardView;
         TextView folderName = localCardView.findViewById(R.id.folder_name_card);
+        TextView numberOfNotes = localCardView.findViewById(R.id.note_numbers_card);
         ImageView folderImageView = localCardView.findViewById(R.id.folder_image_card);
         Glide.with(context).load(R.drawable.folder_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText("Sample");
-
+        numberOfNotes.setText("20 - notes");
         localCardView.setOnClickListener(v -> {context.startActivity(new Intent(context, NoteListActivity.class));});
     }
 

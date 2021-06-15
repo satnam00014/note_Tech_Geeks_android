@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.folder_search_menu, menu);
 
         // below line is to get our menu item.
-        MenuItem searchItem = menu.findItem(R.id.actionSearch);
+        MenuItem searchItem = menu.findItem(R.id.actionSearch_folder);
 
         // getting search view of our item.
         SearchView searchView = (SearchView) searchItem.getActionView();
