@@ -25,13 +25,16 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     List<String > folders;
     List<String> totalFolders;
     Context context;
-    Activity recycleViewActivity;
+    Activity folderActivity;
 
-    public FolderRecyclerAdapter(List<String> contactList, Context context,Activity recycleViewActivity) {
+    public FolderRecyclerAdapter(List<String> contactList, Context context,Activity folderActivity) {
         this.folders = contactList;
         this.totalFolders = contactList;
         this.context = context;
-        this.recycleViewActivity = recycleViewActivity;
+        //following is passed to access titlebar or similar properties from adapter.
+        this.folderActivity = folderActivity;
+        //following is to set title of activity
+        folderActivity.setTitle(" 20 - Folders");
     }
 
     @Override
@@ -42,19 +45,29 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        //this is where where view in inflated and will return view holder with view(that means card)
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.folder_card, parent, false);
+        return new ViewHolder((CardView) view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        //instance of card on which we are performing operations.
+        CardView localCardView = holder.currentCardView;
+        TextView folderName = localCardView.findViewById(R.id.folder_name_card);
+        ImageView contactImageView = localCardView.findViewById(R.id.folder_image_card);
+        Glide.with(context).load(R.drawable.folder_icon)
+                .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(contactImageView);
+        folderName.setText("Sample");
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return 20;
     }
 
-
+    // this is the view holder which holds the view
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CardView currentCardView;
 
