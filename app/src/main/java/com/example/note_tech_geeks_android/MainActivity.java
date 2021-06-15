@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecyclerView(){
-        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view_folder);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         folderRecyclerAdapter = new FolderRecyclerAdapter(new ArrayList<>(),this,this);

@@ -20,33 +20,26 @@ import com.example.note_tech_geeks_android.R;
 
 import java.util.List;
 
-public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAdapter.ViewHolder> implements Filterable {
+public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdapter.ViewHolder> implements Filterable {
 
-    List<String > folders;
-    List<String> totalFolders;
+    List<String > notes;
+    List<String> totalNotes;
     Context context;
-    Activity folderActivity;
+    Activity noteListActivity;
 
-    public FolderRecyclerAdapter(List<String> folderList, Context context,Activity folderActivity) {
-        this.folders = folderList;
-        this.totalFolders = folders;
+    public NotesRecyclerAdapter(List<String> notesList, Context context,Activity noteListActivity) {
+        this.notes = notesList;
+        this.totalNotes = notesList;
         this.context = context;
         //following is passed to access titlebar or similar properties from adapter.
-        this.folderActivity = folderActivity;
+        this.noteListActivity = noteListActivity;
     }
-
-    @Override
-    public Filter getFilter() {
-        return null;
-    }
-
-    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //this is where where view in inflated and will return view holder with view(that means card)
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.folder_card, parent, false);
-        folderActivity.setTitle(" 20 - Folders");
+                .inflate(R.layout.note_card, parent, false);
+        noteListActivity.setTitle(" 20 - Notes");
         return new ViewHolder((CardView) view);
     }
 
@@ -54,16 +47,23 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //instance of card on which we are performing operations.
         CardView localCardView = holder.currentCardView;
-        TextView folderName = localCardView.findViewById(R.id.folder_name_card);
-        ImageView folderImageView = localCardView.findViewById(R.id.folder_image_card);
-        Glide.with(context).load(R.drawable.folder_icon)
-                .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
-        folderName.setText("Sample");
+        TextView noteName = localCardView.findViewById(R.id.note_name_card);
+        TextView noteDate = localCardView.findViewById(R.id.note_date_card);
+        ImageView noteImageView = localCardView.findViewById(R.id.note_image_card);
+        Glide.with(context).load(R.drawable.note_icon)
+                .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(noteImageView);
+        noteName.setText("Sample Title");
+        noteDate.setText("Date: dd/mm/yyyy");
     }
 
     @Override
     public int getItemCount() {
         return 20;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return null;
     }
 
     // this is the view holder which holds the view
