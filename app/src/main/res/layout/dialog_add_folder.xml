@@ -39,18 +39,19 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
             >
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/create_folder_dialog_bt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OK"
+                android:text="CREATE"
                 android:textColor="#fff"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 android:layout_marginVertical="5dp"
                 android:background="@drawable/button_background"
                 android:layout_marginHorizontal="40dp"
                 />
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/cancel_folder_dialog_bt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,6 +60,7 @@
                 android:layout_marginRight="10dp"
                 android:background="@drawable/button_background"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 android:textColor="#fff"
                 android:text="CANCEL"
                 />

@@ -79,7 +79,7 @@
                 android:layout_marginVertical="7dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:backgroundTint="@android:color/holo_red_dark"
+                android:backgroundTint="@color/red_dark_delete"
                 android:paddingLeft="15dp"
                 android:src="@drawable/delete_icon"
                 app:borderWidth="0dp"

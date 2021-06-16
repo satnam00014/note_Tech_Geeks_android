@@ -1,8 +1,11 @@
 package com.example.note_tech_geeks_android.RecyclerAdapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -63,6 +67,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText("Sample");
         numberOfNotes.setText("20 - notes");
+        localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {this.deleteDialog();});
         localCardView.setOnClickListener(v -> {context.startActivity(new Intent(context, NoteListActivity.class));});
     }
 
@@ -79,5 +84,26 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
             super(cardView);
             this.currentCardView = cardView;
         }
+    }
+
+    private void deleteDialog(){
+        // create a dialog box from layout using layout inflater.
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        View view = layoutInflater.inflate(R.layout.dialog_delete_folder, null);
+        builder.setView(view);
+        final AlertDialog alertDialog = builder.create();
+        //following is to disable dismiss if user touches outside the dialog box area
+        alertDialog.setCanceledOnTouchOutside(false);
+        //following is to add transparent background for roundedges other wise white corner will be shown
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+        view.findViewById(R.id.cancel_folder_delete_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
+        view.findViewById(R.id.delete_folder_dialog_bt).setOnClickListener(v -> {this.deleteFolder();});
+    }
+
+    //write logic to delete folder in this function.
+    private void deleteFolder(){
+        Toast.makeText(context,"delete button",Toast.LENGTH_SHORT).show();
     }
 }

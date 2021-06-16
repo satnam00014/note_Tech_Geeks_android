@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.note_tech_geeks_android.RecyclerAdapters.FolderRecyclerAdapter;
 
@@ -44,9 +45,16 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog alertDialog = builder.create();
         //following is to disable dismiss if user touches outside the dialog box area
         alertDialog.setCanceledOnTouchOutside(false);
+        //following is to add transparent background for roundedges other wise white corner will be shown
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
         view.findViewById(R.id.cancel_folder_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
+        view.findViewById(R.id.create_folder_dialog_bt).setOnClickListener(v -> { this.addFolder(); });
+    }
+
+    //add folder logic in below function
+    private void addFolder(){
+        Toast.makeText(this,"Create button",Toast.LENGTH_SHORT).show();
     }
 
     @Override
