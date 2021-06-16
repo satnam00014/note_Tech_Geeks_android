@@ -5,10 +5,15 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.note_tech_geeks_android.RecyclerAdapters.FolderRecyclerAdapter;
 
@@ -26,7 +31,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //setting for recycler view and adapter for that
+        findViewById(R.id.add_folder_btn).setOnClickListener(v -> { this.createFolderDialog(); });
         setRecyclerView();
+    }
+
+    private void createFolderDialog() {
+        // create a dialog box from layout using layout inflater.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View view = layoutInflater.inflate(R.layout.dialog_add_folder, null);
+        builder.setView(view);
+        final AlertDialog alertDialog = builder.create();
+        //following is to disable dismiss if user touches outside the dialog box area
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+        view.findViewById(R.id.cancel_folder_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
     }
 
     @Override
@@ -52,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                folderRecyclerAdapter.getFilter().filter(newText);
+                //create filter class before apply below line otherwise app will crash
+                //folderRecyclerAdapter.getFilter().filter(newText);
                 return true;
             }
         });

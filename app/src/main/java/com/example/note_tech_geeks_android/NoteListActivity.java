@@ -52,7 +52,8 @@ public class NoteListActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                notesRecyclerAdapter.getFilter().filter(newText);
+                //create filter class before apply below line otherwise app will crash
+                //notesRecyclerAdapter.getFilter().filter(newText);
                 return true;
             }
         });
