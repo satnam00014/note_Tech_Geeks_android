@@ -31,8 +31,12 @@ import com.example.note_tech_geeks_android.models.FolderWithNotes;
 import com.example.note_tech_geeks_android.models.Note;
 import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdapter.ViewHolder> implements Filterable {
@@ -165,6 +169,21 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     public void sortDESC(){
         sortASC();
         Collections.reverse(notes);
+        notifyDataSetChanged();
+    }
+    public void sortDateASC(){
+        Collections.sort(notes, new Comparator<Note>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            @Override
+            public int compare(Note o1, Note o2) {
+                try {
+                    return f.parse(o1.getNoteDate()).compareTo(f.parse(o2.getNoteDate()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
         notifyDataSetChanged();
     }
 }
