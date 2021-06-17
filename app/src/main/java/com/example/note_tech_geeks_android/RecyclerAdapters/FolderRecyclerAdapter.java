@@ -33,12 +33,14 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     FolderViewModel folderViewModel;
     List<FolderWithNotes> folders;
     List<FolderWithNotes> totalFolders;
+    List<Integer> folderNoteCounts;
     Context context;
 
     public FolderRecyclerAdapter(Context context) {
         this.folderViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(FolderViewModel.class);
         this.folders = new ArrayList<>();
         this.context = context;
+        this.folderNoteCounts = new ArrayList<>();
     }
 
     @Override
@@ -92,8 +94,9 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         Glide.with(context).load(R.drawable.folder_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText(folders.get(position).folder.getTitle());
+        numberOfNotes.setText(folderNoteCounts.get(position).toString());
 
-            // Delete Part 1
+        // Delete Part 1
 //        localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {
 //            this.deleteFolderDialog(folders.get(position).folder);
 //        });
@@ -134,6 +137,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         if (data != null) {
             folders.clear();
             folders.addAll(data);
+            getFolderNotesCount(data);
             notifyDataSetChanged();
         } else {
             folders = data;
@@ -148,6 +152,11 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         public ViewHolder(@NonNull CardView cardView) {
             super(cardView);
             this.currentCardView = cardView;
+        }
+    }
+    public void getFolderNotesCount(List<FolderWithNotes> data){
+        for (FolderWithNotes folderWithNotes: data){
+            this.folderNoteCounts.add(folderViewModel.getFolderNotesCount(folderWithNotes.folder.getId()));
         }
     }
 }

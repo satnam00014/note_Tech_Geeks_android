@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //change constructor of adapter accordingly ...
         //This constructor is just a sample ...
-        folderRecyclerAdapter = new FolderRecyclerAdapter(new ArrayList<>(),this,this);
+        folderRecyclerAdapter = new FolderRecyclerAdapter(this);
         recyclerView.setAdapter(folderRecyclerAdapter);
 
         this.setTitle("0 - folders");
