@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -66,14 +67,19 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private ImageView imageView;
 
     private MediaRecorder mediaRecorder;
+    private MediaPlayer mediaPlayer;
+
     private AudioManager audioManager;
 
     private String pathForAudio = "";
+
     private boolean isRecording = false;
+    private boolean isRecordingPlaying = false;
 
     final private static String RECORDED_FILE = "/audio.3gp";
 
     private ImageButton btnRecord;
+    private ImageButton btnPlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +112,10 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
 
         btnRecord = findViewById(R.id.record_button_create);
+        btnPlay = findViewById(R.id.play_button_create);
+
         enableOrDisableRecording();
+        playOrPauseRecording();
     }
 
     private void enableOrDisableRecording(){
@@ -133,7 +142,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                                 mediaRecorder.prepare();
                                 mediaRecorder.start();
                             } catch (IllegalStateException ise) {
-                                // make something ...
+
                                 ise.printStackTrace();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -153,6 +162,53 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 }
             });
         }
+
+    private void playOrPauseRecording(){
+
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!isRecordingPlaying){
+
+                    isRecordingPlaying = true;
+                    btnRecord.setEnabled(false);
+
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(pathForAudio);
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+
+                            btnRecord.setEnabled(true);
+                            Toast.makeText(CreateNoteActivity.this, "Recording is Completed...", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mediaPlayer.start();
+                    Toast.makeText(CreateNoteActivity.this, "Recording is playing...", Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+                    isRecordingPlaying = false;
+                    btnPlay.setEnabled(true);
+                    btnRecord.setEnabled(true);
+
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        setUpMediaRecorder();
+                    }
+                }
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent backIntent) {
