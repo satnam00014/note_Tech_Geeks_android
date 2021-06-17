@@ -159,6 +159,9 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             if (!titleEditText.getText().toString().isEmpty() && !contentEditText.getText().toString().isEmpty()){
                 String dateTime = formatter.format(new Date());
                 Note newNote = new Note(folderId, titleEditText.getText().toString(), contentEditText.getText().toString(), dateTime);
+                if(locationSwitch.isChecked()){
+                    newNote.setLocation(currentLocation.getLongitude() + " " + currentLocation.getLatitude());
+                }
 
             }
 
