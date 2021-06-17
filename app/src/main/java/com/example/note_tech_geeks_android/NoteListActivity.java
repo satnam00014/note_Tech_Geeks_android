@@ -5,6 +5,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +27,7 @@ public class NoteListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_list);
 
-        findViewById(R.id.add_note_btn).setOnClickListener(v -> {});
+        findViewById(R.id.add_note_btn).setOnClickListener(v -> {startActivity(new Intent(this,CreateNoteActivity.class));});
 
         //setting for recycler view and adapter for that
         setRecyclerView();

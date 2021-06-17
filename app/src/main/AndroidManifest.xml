@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Note_Tech_Geeks_android">
-        <activity android:name=".MoveNoteActivity"></activity>
+        <activity android:name=".CreateNoteActivity"></activity>
+        <activity android:name=".MoveNoteActivity" />
         <activity android:name=".NoteListActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

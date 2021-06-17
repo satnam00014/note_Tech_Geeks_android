@@ -82,7 +82,7 @@
                 android:layout_marginLeft="15dp"
                 android:backgroundTint="@android:color/holo_green_dark"
                 android:paddingLeft="15dp"
-                android:src="@drawable/edit_icon"
+                android:src="@drawable/move_icon"
                 app:borderWidth="0dp"
                 app:tint = "@color/white"
                 app:fabSize="mini" />
