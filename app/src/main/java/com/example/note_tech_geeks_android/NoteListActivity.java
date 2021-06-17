@@ -1,5 +1,4 @@
 package com.example.note_tech_geeks_android;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -38,7 +37,7 @@ public class NoteListActivity extends AppCompatActivity {
 
         //setting for recycler view and adapter for that
         setRecyclerView();
-        this.setTitle("Notes");
+
     }
 
     @Override

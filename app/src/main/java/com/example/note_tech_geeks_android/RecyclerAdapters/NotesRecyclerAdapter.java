@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.note_tech_geeks_android.MoveNoteActivity;
+import com.example.note_tech_geeks_android.NoteListActivity;
 import com.example.note_tech_geeks_android.R;
 import com.example.note_tech_geeks_android.models.Folder;
 import com.example.note_tech_geeks_android.models.FolderWithNotes;
@@ -154,5 +155,6 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             folder = data.folder;
         }
         this.totalNotes = new ArrayList<>(notes);
+        ((NoteListActivity)context).setTitle(notes.size() + " - Notes");
     }
 }
