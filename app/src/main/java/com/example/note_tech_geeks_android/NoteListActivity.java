@@ -68,6 +68,32 @@ public class NoteListActivity extends AppCompatActivity {
                 return false;
             }
         });
+        MenuItem sortASC = menu.findItem(R.id.asc_name);
+        MenuItem sortDESC = menu.findItem(R.id.desc_name);
+        MenuItem sortDateASC = menu.findItem(R.id.asc_date);
+        MenuItem sortDateDESC = menu.findItem(R.id.desc_date);
+        sortASC.setOnMenuItemClickListener(item -> {
+            notesRecyclerAdapter.sortASC();
+            return false;
+        });
+        sortDateASC.setOnMenuItemClickListener(item ->{
+            notesRecyclerAdapter.sortDateASC();
+            return false;
+        });
+        sortDateDESC.setOnMenuItemClickListener(item ->{
+            notesRecyclerAdapter.sortDateDESC();
+            return false;
+        });
+
+        sortDESC.setOnMenuItemClickListener(item -> {
+            notesRecyclerAdapter.sortDESC();
+            return false;
+        });
+
+
+
+
+
         return true;
     }
 
@@ -80,4 +106,5 @@ public class NoteListActivity extends AppCompatActivity {
         notesRecyclerAdapter.setData(folderWithNotes);
 
     }
+
 }
