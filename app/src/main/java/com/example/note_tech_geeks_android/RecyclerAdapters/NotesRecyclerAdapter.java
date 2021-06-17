@@ -186,4 +186,9 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         });
         notifyDataSetChanged();
     }
+    public void sortDateDESC(){
+        sortDateASC();
+        Collections.reverse(notes);
+        notifyDataSetChanged();
+    }
 }
