@@ -162,4 +162,9 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         Collections.sort(notes, (o1, o2) -> o1.getNoteTitle().compareTo(o2.getNoteTitle()));
         notifyDataSetChanged();
     }
+    public void sortDESC(){
+        sortASC();
+        Collections.reverse(notes);
+        notifyDataSetChanged();
+    }
 }
