@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -16,7 +17,12 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -37,6 +43,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
+
 public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -50,15 +58,22 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private LatLng userLatLng;
     private Location currentLocation;
     private boolean attachLocation = false;
+
     private int REQUEST_CODE_CAMERA = 100;
     private int REQUEST_CODE_GALLERY = 110;
     private int REQUEST_CODE_AUDIO = 120;
+
     private ImageView imageView;
 
-    MediaRecorder mediaRecorder;
+    private MediaRecorder mediaRecorder;
     private AudioManager audioManager;
 
+    private String pathForAudio = "";
+    private boolean isRecording = false;
+
     final private static String RECORDED_FILE = "/audio.3gp";
+
+    private ImageButton btnRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +102,57 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             startActivityForResult(intent,REQUEST_CODE_GALLERY);
         });
 
-
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
 
+        btnRecord = findViewById(R.id.record_button_create);
+        enableOrDisableRecording();
     }
+
+    private void enableOrDisableRecording(){
+
+        if (!checkPermissionDevice())
+            requestPermissionForAudio();
+
+            btnRecord.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (checkPermissionDevice()) {
+
+                        if(!isRecording){
+
+                            isRecording = true;
+                            pathForAudio = getExternalCacheDir().getAbsolutePath()
+                                    + RECORDED_FILE;
+
+                            Log.d("path", "onClick: " + pathForAudio);
+
+                            setUpMediaRecorder();
+
+                            try {
+                                mediaRecorder.prepare();
+                                mediaRecorder.start();
+                            } catch (IllegalStateException ise) {
+                                // make something ...
+                                ise.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Toast.makeText(CreateNoteActivity.this, "Recording...", Toast.LENGTH_SHORT).show();
+                        }
+
+                        else{
+
+                            isRecording = false;
+                            mediaRecorder.stop();
+                            Toast.makeText(CreateNoteActivity.this, "Recording stop ...", Toast.LENGTH_SHORT).show();
+                        }
+                    } else
+                        requestPermission();
+                }
+            });
+        }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent backIntent) {
@@ -215,13 +276,46 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean isPermissionGranted(){
+
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void setUpMediaRecorder() {
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(pathForAudio);
     }
 
     private void requestPermission(){
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+    }
+
+    private void requestPermissionForAudio() {
+
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+        }, REQUEST_CODE_AUDIO);
+    }
+
+    private boolean checkPermissionDevice() {
+
+        int write_external_storage_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int record_audio_result = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
+                record_audio_result == PackageManager.PERMISSION_GRANTED;
     }
 }
