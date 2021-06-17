@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.ImageView;
@@ -46,6 +47,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private Location currentLocation;
     private boolean attachLocation = false;
     private int REQUEST_CODE_CAMERA = 100;
+    private int REQUEST_CODE_GALLERY = 110;
     private ImageView imageView;
 
     @Override
@@ -67,6 +69,13 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent,REQUEST_CODE_CAMERA);
         });
+
+        findViewById(R.id.gallery_button_create).setOnClickListener(v ->{
+
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent,REQUEST_CODE_GALLERY);
+        });
     }
 
     @Override
@@ -78,6 +87,21 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             if (resultCode == RESULT_OK) {
                 Bitmap bmp = (Bitmap) (backIntent.getExtras().get("data"));
                 imageView.setImageBitmap(bmp);
+            }
+            else if (requestCode == REQUEST_CODE_GALLERY)  //back from gallery
+            {
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Uri uri = backIntent.getData();
+                        //following to convert from uri to bitmap
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        //following is to get and show image through URI in image view
+                        //imv1.setImageURI(uri);
+                        imageView.setImageBitmap(bitmap);
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                }
             }
         }
     }
