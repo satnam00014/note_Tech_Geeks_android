@@ -32,6 +32,7 @@ import com.example.note_tech_geeks_android.models.Note;
 import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdapter.ViewHolder> implements Filterable {
@@ -156,5 +157,9 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         }
         this.totalNotes = new ArrayList<>(notes);
         ((NoteListActivity)context).setTitle(notes.size() + " - Notes");
+    }
+    public void sortASC(){
+        Collections.sort(notes, (o1, o2) -> o1.getNoteTitle().compareTo(o2.getNoteTitle()));
+        notifyDataSetChanged();
     }
 }
