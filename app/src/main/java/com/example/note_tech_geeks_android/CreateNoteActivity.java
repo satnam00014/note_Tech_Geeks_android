@@ -1,6 +1,7 @@
 package com.example.note_tech_geeks_android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -8,9 +9,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -40,7 +45,8 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private LatLng userLatLng;
     private Location currentLocation;
     private boolean attachLocation = false;
-
+    private int REQUEST_CODE_CAMERA = 100;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,26 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         //shown on map
         bindLocationSwitch();
 
+        imageView = findViewById(R.id.image_note_create);
+
+        findViewById(R.id.camera_button_create).setOnClickListener(v -> {
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent,REQUEST_CODE_CAMERA);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent backIntent) {
+        super.onActivityResult(requestCode, resultCode, backIntent);
+
+        if (requestCode == REQUEST_CODE_CAMERA)  //back from camera
+        {
+            if (resultCode == RESULT_OK) {
+                Bitmap bmp = (Bitmap) (backIntent.getExtras().get("data"));
+                imageView.setImageBitmap(bmp);
+            }
+        }
     }
 
     @Override

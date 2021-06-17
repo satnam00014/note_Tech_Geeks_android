@@ -131,6 +131,7 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/image_note_create"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:tooltipText="Image view for photo"
