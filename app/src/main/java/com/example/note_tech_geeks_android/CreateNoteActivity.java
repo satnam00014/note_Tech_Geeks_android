@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -23,6 +24,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -32,6 +34,8 @@ import android.widget.Toast;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 
+import com.example.note_tech_geeks_android.models.Note;
+import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -46,6 +50,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,7 +69,11 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private Location currentLocation;
     private boolean attachLocation = false;
     private Button cancelButton;
-
+    private Button saveButton;
+    NoteViewModel noteViewModel;
+    private int folderId;
+    private EditText titleEditText;
+    private EditText contentEditText;
     private int REQUEST_CODE_CAMERA = 100;
     private int REQUEST_CODE_GALLERY = 110;
     private int REQUEST_CODE_AUDIO = 120;
@@ -98,8 +108,22 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         //following is to bind location switch that when it is enable only then location will be
         //shown on map
         bindLocationSwitch();
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+
+        // Cancel button
         cancelButton = findViewById(R.id.cancel_button_create_note);
         cancelButton.setOnClickListener(v -> { this.finish();});
+
+        // Save button
+
+        folderId = getIntent().getIntExtra("folderId",1);
+        saveButton = findViewById(R.id.save_button_create_note);
+        titleEditText = findViewById(R.id.note_title_create);
+        contentEditText = findViewById(R.id.note_detail_create);
+
 
         imageView = findViewById(R.id.image_note_create);
 
@@ -126,6 +150,16 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         enableOrDisableRecording();
 
         playOrPauseRecording();
+
+
+        saveButton.setOnClickListener(v -> {
+            if (!titleEditText.getText().toString().isEmpty() && !contentEditText.getText().toString().isEmpty()){
+                String dateTime = formatter.format(new Date());
+                Note newNote = new Note(folderId, titleEditText.getText().toString(), contentEditText.getText().toString(), dateTime);
+
+            }
+
+        });
     }
 
     private void enableOrDisableRecording(){
