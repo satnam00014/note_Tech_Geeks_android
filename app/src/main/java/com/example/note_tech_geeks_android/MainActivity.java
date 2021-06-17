@@ -1,10 +1,5 @@
 package com.example.note_tech_geeks_android;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.graphics.Color;
@@ -16,15 +11,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.note_tech_geeks_android.RecyclerAdapters.FolderRecyclerAdapter;
+import com.example.note_tech_geeks_android.models.Folder;
 import com.example.note_tech_geeks_android.viewmodel.FolderViewModel;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
-
     FolderViewModel folderViewModel;
     //reference for recyclerView and adapter for that
     private RecyclerView recyclerView;
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // logic to refresh Recycler view data when user return to this activity
-    private void loadData(){
+    private void loadData() {
 
     }
 
@@ -76,10 +74,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //add folder logic in below function
-    private void addFolder(AlertDialog alertDialog){
-        Toast.makeText(this,"Create button",Toast.LENGTH_SHORT).show();
-        //write your logic here
-        alertDialog.dismiss();
+    private void addFolder(String title) {
+        folderViewModel.insert(new Folder(title));
     }
 
     @Override
@@ -106,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //create filter class before apply below line otherwise app will crash
-                //folderRecyclerAdapter.getFilter().filter(newText);
-                return true;
+                folderRecyclerAdapter.getFilter().filter(newText);
+                return false;
             }
         });
         return true;
