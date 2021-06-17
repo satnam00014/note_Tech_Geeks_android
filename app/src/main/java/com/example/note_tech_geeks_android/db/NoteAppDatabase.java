@@ -13,6 +13,7 @@ import com.example.note_tech_geeks_android.dao.NoteDao;
 import com.example.note_tech_geeks_android.models.Folder;
 import com.example.note_tech_geeks_android.models.Note;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +32,9 @@ public abstract class NoteAppDatabase extends RoomDatabase {
         public void onCreate(SupportSQLiteDatabase db) {
             super.onCreate(db);
 
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateTime = formatter.format(new Date());
+
             databaseWriteExecutor.execute(() -> {
                 FolderDao folderDao = noteAppDatabase.folderDao();
                 NoteDao noteDao = noteAppDatabase.noteDao();
@@ -40,8 +44,11 @@ public abstract class NoteAppDatabase extends RoomDatabase {
                 folderDao.insertFolder(folder);
                 Note note = new Note(1,"Don't forget send mail to Carolina.", "Mail", new Date().toString());
                 noteDao.insertNote(note);
-                note = new Note(2,"Math exam tomorrow.", "Exam", new Date().toString());
+                note = new Note(2,"Math exam tomorrow.", "Exam", dateTime);
                 noteDao.insertNote(note);
+                note = new Note(2,"Lorem ipsum.", "Lorem ipsum", dateTime);
+                noteDao.insertNote(note);
+
             });
 
         }
