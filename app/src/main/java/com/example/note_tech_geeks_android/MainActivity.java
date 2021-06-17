@@ -2,6 +2,7 @@ package com.example.note_tech_geeks_android;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,11 +18,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.note_tech_geeks_android.RecyclerAdapters.FolderRecyclerAdapter;
+import com.example.note_tech_geeks_android.viewmodel.FolderViewModel;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    FolderViewModel folderViewModel;
     //reference for recyclerView and adapter for that
     private RecyclerView recyclerView;
     private FolderRecyclerAdapter folderRecyclerAdapter;
@@ -30,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
         //setting for recycler view and adapter for that
-        findViewById(R.id.add_folder_btn).setOnClickListener(v -> { this.createFolderDialog(); });
+        findViewById(R.id.add_folder_btn).setOnClickListener(v -> {
+            this.createFolderDialog();
+        });
         setRecyclerView();
     }
 
