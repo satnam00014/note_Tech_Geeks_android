@@ -14,6 +14,9 @@ public class Note implements Serializable {
     private String noteTitle;
     private String noteContent;
     private String noteDate;
+    private String imageURL;
+    private String voiceURL;
+    private String location;
 
     public Note(int folderId, String noteContent, String noteTitle, String noteDate) {
         this.folderId = folderId;
@@ -54,5 +57,28 @@ public class Note implements Serializable {
 
     public void setNoteDate(String date) {
         this.noteDate = date;
+    }
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public String getVoiceURL() {
+        return voiceURL;
+    }
+
+    public void setVoiceURL(String voiceURL) {
+        this.voiceURL = voiceURL;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

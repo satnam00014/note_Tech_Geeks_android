@@ -70,6 +70,8 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private boolean attachLocation = false;
     private Button cancelButton;
     private Button saveButton;
+    private Switch locationSwitch;
+
     NoteViewModel noteViewModel;
     private int folderId;
     private EditText titleEditText;
@@ -110,6 +112,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         bindLocationSwitch();
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        locationSwitch = findViewById(R.id.add_location_switch);
 
 
 
