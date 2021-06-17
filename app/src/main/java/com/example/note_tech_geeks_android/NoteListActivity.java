@@ -26,6 +26,8 @@ public class NoteListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_list);
 
+        findViewById(R.id.add_note_btn).setOnClickListener(v -> {});
+
         //setting for recycler view and adapter for that
         setRecyclerView();
     }

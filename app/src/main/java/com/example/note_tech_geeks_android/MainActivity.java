@@ -49,12 +49,14 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
         view.findViewById(R.id.cancel_folder_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
-        view.findViewById(R.id.create_folder_dialog_bt).setOnClickListener(v -> { this.addFolder(); });
+        view.findViewById(R.id.create_folder_dialog_bt).setOnClickListener(v -> { this.addFolder(alertDialog); });
     }
 
     //add folder logic in below function
-    private void addFolder(){
+    private void addFolder(AlertDialog alertDialog){
         Toast.makeText(this,"Create button",Toast.LENGTH_SHORT).show();
+        //write your logic here
+        alertDialog.dismiss();
     }
 
     @Override

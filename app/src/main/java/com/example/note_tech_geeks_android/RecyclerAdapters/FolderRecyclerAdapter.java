@@ -67,7 +67,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText("Sample");
         numberOfNotes.setText("20 - notes");
-        localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {this.deleteDialog();});
+        localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {this.deleteFolderDialog(25);});
         localCardView.setOnClickListener(v -> {context.startActivity(new Intent(context, NoteListActivity.class));});
     }
 
@@ -86,7 +86,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         }
     }
 
-    private void deleteDialog(){
+    private void deleteFolderDialog(int folderId){
         // create a dialog box from layout using layout inflater.
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -99,11 +99,13 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
         view.findViewById(R.id.cancel_folder_delete_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
-        view.findViewById(R.id.delete_folder_dialog_bt).setOnClickListener(v -> {this.deleteFolder();});
+        view.findViewById(R.id.delete_folder_dialog_bt).setOnClickListener(v -> {this.deleteFolder(alertDialog,folderId);});
     }
 
     //write logic to delete folder in this function.
-    private void deleteFolder(){
+    private void deleteFolder(AlertDialog alertDialog, int folderId){
         Toast.makeText(context,"delete button",Toast.LENGTH_SHORT).show();
+        //write you logic here
+        alertDialog.dismiss();
     }
 }

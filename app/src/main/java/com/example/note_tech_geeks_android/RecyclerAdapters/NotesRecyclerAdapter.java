@@ -1,7 +1,10 @@
 package com.example.note_tech_geeks_android.RecyclerAdapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -54,6 +58,8 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(noteImageView);
         noteName.setText("Sample Title");
         noteDate.setText("Date: dd/mm/yyyy");
+        localCardView.findViewById(R.id.edit_bt_note_card).setOnClickListener(v -> {});
+        localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(25);});
     }
 
     @Override
@@ -74,5 +80,25 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             super(cardView);
             this.currentCardView = cardView;
         }
+    }
+
+    private void deleteNoteDialog(int noteId){
+        // create a dialog box from layout using layout inflater.
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        View view = layoutInflater.inflate(R.layout.dialog_delete_note, null);
+        builder.setView(view);
+        final AlertDialog alertDialog = builder.create();
+        //following is to disable dismiss if user touches outside the dialog box area
+        alertDialog.setCanceledOnTouchOutside(false);
+        //following is to add transparent background for roundedges other wise white corner will be shown
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+        view.findViewById(R.id.cancel_note_delete_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
+        view.findViewById(R.id.delete_note_dialog_bt).setOnClickListener(v -> {
+            Toast.makeText(context,"Delete Note",Toast.LENGTH_SHORT).show();
+            //write logic to delete note
+            alertDialog.dismiss();
+        });
     }
 }
