@@ -113,15 +113,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void setRecyclerView(){
+    private void setRecyclerView() {
         recyclerView = findViewById(R.id.recycler_view_folder);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //change constructor of adapter accordingly ...
         //This constructor is just a sample ...
         folderRecyclerAdapter = new FolderRecyclerAdapter(this);
+        folderViewModel.getAllFolders().observe(this, data -> folderRecyclerAdapter.setData(data));
         recyclerView.setAdapter(folderRecyclerAdapter);
 
-        this.setTitle("0 - folders");
+        this.setTitle("Folders");
     }
 }
