@@ -62,6 +62,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private LatLng userLatLng;
     private Location currentLocation;
     private boolean attachLocation = false;
+    private Button cancelButton;
 
     private int REQUEST_CODE_CAMERA = 100;
     private int REQUEST_CODE_GALLERY = 110;
@@ -97,6 +98,8 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         //following is to bind location switch that when it is enable only then location will be
         //shown on map
         bindLocationSwitch();
+        cancelButton = findViewById(R.id.cancel_button_create_note);
+        cancelButton.setOnClickListener(v -> { this.finish();});
 
         imageView = findViewById(R.id.image_note_create);
 
