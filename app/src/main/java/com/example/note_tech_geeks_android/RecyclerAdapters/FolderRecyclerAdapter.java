@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.note_tech_geeks_android.MainActivity;
 import com.example.note_tech_geeks_android.NoteListActivity;
 import com.example.note_tech_geeks_android.R;
 import com.example.note_tech_geeks_android.models.Folder;
@@ -143,6 +144,8 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
             folders = data;
         }
         this.totalFolders = new ArrayList<>(folders);
+        ((MainActivity)context).setTitle(folders.size() + " - Folders");
+
     }
 
     // this is the view holder which holds the view
