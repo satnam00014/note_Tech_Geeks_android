@@ -17,39 +17,38 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.note_tech_geeks_android.EditNoteActivity;
 import com.example.note_tech_geeks_android.MoveNoteActivity;
 import com.example.note_tech_geeks_android.R;
+import com.example.note_tech_geeks_android.models.Folder;
+import com.example.note_tech_geeks_android.models.FolderWithNotes;
+import com.example.note_tech_geeks_android.models.Note;
+import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdapter.ViewHolder> implements Filterable {
-
-    List<String > notes;
-    List<String> totalNotes;
+    NoteViewModel noteViewModel;
+    List<Note> notes;
+    List<Note> totalNotes;
     Context context;
-    Activity noteListActivity;
-    int folderId;
-
-    public NotesRecyclerAdapter(List<String> notesList, Context context,Activity noteListActivity,int folderId) {
-        this.notes = notesList;
-        this.totalNotes = notesList;
+    Folder folder;
+    public NotesRecyclerAdapter(Context context) {
+        this.notes = new ArrayList<>();
         this.context = context;
-        //following is passed to access titlebar or similar properties from adapter.
-        this.noteListActivity = noteListActivity;
-        //can perform search using the folder id.
-        this.folderId = folderId;
+        noteViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(NoteViewModel.class);
     }
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //this is where where view in inflated and will return view holder with view(that means card)
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.note_card, parent, false);
-        noteListActivity.setTitle(" 20 - Notes");
         return new ViewHolder((CardView) view);
     }
 
@@ -62,32 +61,56 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         ImageView noteImageView = localCardView.findViewById(R.id.note_image_card);
         Glide.with(context).load(R.drawable.note_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(noteImageView);
-        noteName.setText("Sample Title");
-        noteDate.setText("Date: dd/mm/yyyy");
+        noteName.setText(notes.get(position).getNoteTitle());
+        noteDate.setText("Date: " + notes.get(position).getNoteDate());
         localCardView.findViewById(R.id.edit_bt_note_card).setOnClickListener(v -> {
             Intent intent = new Intent(context, MoveNoteActivity.class);
-            //give note id in place of 25
-            intent.putExtra("noteId",25);
+            intent.putExtra("note",notes.get(position));
+            intent.putExtra("folder", folder);
             context.startActivity(intent);
         });
-        localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(25);});
-        localCardView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, EditNoteActivity.class);
-            //give note id in place of 25
-            intent.putExtra("noteId",25);
-            context.startActivity(intent);
-        });
+        // Delete Part 2
+//        localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(notes.get(position));});
     }
 
     @Override
     public int getItemCount() {
-        return 20;
+        return notes.size();
     }
+
+
 
     @Override
     public Filter getFilter() {
-        return null;
+        return filter;
     }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Note> filteredNotes = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredNotes.addAll(totalNotes);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (Note note : totalNotes) {
+                    if (note.getNoteTitle().toLowerCase().contains(filterPattern)) {
+                        filteredNotes.add(note);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredNotes;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            notes.clear();
+            notes.addAll((List<Note>) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     // this is the view holder which holds the view
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -98,24 +121,38 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             this.currentCardView = cardView;
         }
     }
+        // Delete part 2
+//    private void deleteNoteDialog(Note note){
+//        // create a dialog box from layout using layout inflater.
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        LayoutInflater layoutInflater = LayoutInflater.from(context);
+//        View view = layoutInflater.inflate(R.layout.dialog_delete_note, null);
+//        builder.setView(view);
+//        final AlertDialog alertDialog = builder.create();
+//        //following is to disable dismiss if user touches outside the dialog box area
+//        alertDialog.setCanceledOnTouchOutside(false);
+//        //following is to add transparent background for roundedges other wise white corner will be shown
+//        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        alertDialog.show();
+//        view.findViewById(R.id.cancel_note_delete_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
+//        view.findViewById(R.id.delete_note_dialog_bt).setOnClickListener(v -> {
+//            noteViewModel.delete(note);
+//            notes.remove(note);
+//            notifyDataSetChanged();
+//            alertDialog.dismiss();
+//        });
+//    }
 
-    private void deleteNoteDialog(int noteId){
-        // create a dialog box from layout using layout inflater.
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.dialog_delete_note, null);
-        builder.setView(view);
-        final AlertDialog alertDialog = builder.create();
-        //following is to disable dismiss if user touches outside the dialog box area
-        alertDialog.setCanceledOnTouchOutside(false);
-        //following is to add transparent background for roundedges other wise white corner will be shown
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.show();
-        view.findViewById(R.id.cancel_note_delete_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
-        view.findViewById(R.id.delete_note_dialog_bt).setOnClickListener(v -> {
-            Toast.makeText(context,"Delete Note",Toast.LENGTH_SHORT).show();
-            //write logic to delete note
-            alertDialog.dismiss();
-        });
+    public void setData(FolderWithNotes data){
+        if (data != null) {
+            notes.clear();
+            notes.addAll(data.notes);
+            notifyDataSetChanged();
+            folder = data.folder;
+        } else {
+            notes = data.notes;
+            folder = data.folder;
+        }
+        this.totalNotes = new ArrayList<>(notes);
     }
 }

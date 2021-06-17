@@ -93,7 +93,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText(folders.get(position).folder.getTitle());
 
-            // Delete Part
+            // Delete Part 1
 //        localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {
 //            this.deleteFolderDialog(folders.get(position).folder);
 //        });
@@ -108,7 +108,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     public int getItemCount() {
         return folders.size();
     }
-
+            // Delete Part 1
 //    private void deleteFolderDialog(Folder folder) {
 //        // create a dialog box from layout using layout inflater.
 //        AlertDialog.Builder builder = new AlertDialog.Builder(context);
