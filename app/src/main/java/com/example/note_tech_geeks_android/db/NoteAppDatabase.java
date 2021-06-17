@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 @Database(entities = {
         Folder.class,
         Note.class
-}, version = 2, exportSchema = false)
+}, version = 1, exportSchema = false)
 public abstract class NoteAppDatabase extends RoomDatabase {
     private static final String DB_NAME = "note_app_db";
     private static final int NUMBER_OF_THREADS = 4;
