@@ -29,7 +29,13 @@ public class MoveNoteActivity extends AppCompatActivity {
     }
 
     private void setRecyclerView(){
-        this.setTitle("Move note to folder "+noteId);
+        recyclerView = findViewById(R.id.recycler_view_move_notes);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        moveNoteRecyclerAdapter = new MoveNoteRecyclerAdapter(new ArrayList<>(),this,this,noteId);
+        recyclerView.setAdapter(moveNoteRecyclerAdapter);
+
+        this.setTitle("Move note to folder");
     }
 
 

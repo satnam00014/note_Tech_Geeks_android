@@ -23,6 +23,68 @@ import com.example.note_tech_geeks_android.R;
 
 import java.util.List;
 
-public class MoveNoteRecyclerAdapter {
+public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecyclerAdapter.ViewHolder> implements Filterable {
+
+    List<String > folders;
+    Context context;
+    //activity reference is need to close current activity after moving note to a folder.
+    Activity parentActivity;
+    int noteId;
+
+    public MoveNoteRecyclerAdapter(List<String> folderList, Context context,Activity parentActivity,int noteId) {
+        this.folders = folderList;
+        this.context = context;
+        this.parentActivity = parentActivity;
+        this.noteId = noteId;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        //this is where where view in inflated and will return view holder with view(that means card)
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.move_note_card, parent, false);
+        return new ViewHolder((CardView) view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        //instance of card on which we are performing operations.
+        CardView localCardView = holder.currentCardView;
+        TextView folderName = localCardView.findViewById(R.id.folder_name_move_card);
+        TextView numberOfNotes = localCardView.findViewById(R.id.note_numbers_move_card);
+        ImageView folderImageView = localCardView.findViewById(R.id.folder_image_move_card);
+        Glide.with(context).load(R.drawable.folder_icon)
+                .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
+        folderName.setText("Folder");
+        numberOfNotes.setText("Total notes - 20");
+        localCardView.setOnClickListener(v -> {
+            Toast.makeText(context,"Folder "+(position+1)+" is clicked",Toast.LENGTH_SHORT).show();
+            //Logic to move note.
+            //following line is to close activity after note was moved.
+            parentActivity.finish();
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return 15;
+    }
+
+    // this is the view holder which holds the view
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private CardView currentCardView;
+
+        public ViewHolder(@NonNull CardView cardView) {
+            super(cardView);
+            this.currentCardView = cardView;
+        }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return null;
+    }
+
 
 }
