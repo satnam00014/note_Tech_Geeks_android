@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -75,11 +78,13 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
 
     private boolean isRecording = false;
     private boolean isRecordingPlaying = false;
+    private boolean isRecordingPlayFirstTime = true;
 
     final private static String RECORDED_FILE = "/audio.3gp";
 
     private ImageButton btnRecord;
     private ImageButton btnPlay;
+    private SeekBar seekBarAudio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +116,12 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
 
+
         btnRecord = findViewById(R.id.record_button_create);
         btnPlay = findViewById(R.id.play_button_create);
 
         enableOrDisableRecording();
+
         playOrPauseRecording();
     }
 
@@ -172,42 +179,74 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 if (!isRecordingPlaying){
 
                     isRecordingPlaying = true;
-                    btnRecord.setEnabled(false);
+                    if (isRecordingPlayFirstTime){
 
-                    mediaPlayer = new MediaPlayer();
-                    try {
-                        mediaPlayer.setDataSource(pathForAudio);
-                        mediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        isRecordingPlayFirstTime = false;
+                        btnRecord.setEnabled(false);
+
+                        mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setDataSource(pathForAudio);
+                            mediaPlayer.prepare();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        setSeekBar();
+
+                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+
+                                btnRecord.setEnabled(true);
+                                isRecordingPlaying = false;
+                                seekBarAudio.setProgress(0);
+                                Toast.makeText(CreateNoteActivity.this, "Playing Recorded Audio is Completed...", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        Toast.makeText(CreateNoteActivity.this, "Recorded Audio is playing...", Toast.LENGTH_SHORT).show();
                     }
 
-                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-
-                            btnRecord.setEnabled(true);
-                            Toast.makeText(CreateNoteActivity.this, "Recording is Completed...", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
                     mediaPlayer.start();
-                    Toast.makeText(CreateNoteActivity.this, "Recording is playing...", Toast.LENGTH_SHORT).show();
                 }
                 else{
 
                     isRecordingPlaying = false;
-                    btnPlay.setEnabled(true);
-                    btnRecord.setEnabled(true);
-
-                    if (mediaPlayer != null) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                        setUpMediaRecorder();
-                    }
+                    mediaPlayer.pause();
                 }
             }
         });
+    }
+
+    private void setSeekBar(){
+
+        seekBarAudio = (SeekBar) findViewById(R.id.search_bar_create_note);
+        seekBarAudio.setMax(mediaPlayer.getDuration());
+
+        seekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mediaPlayer.seekTo(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                seekBarAudio.setProgress(mediaPlayer.getCurrentPosition());
+            }
+        }, 0, 300);
     }
 
     @Override
