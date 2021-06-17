@@ -98,9 +98,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         numberOfNotes.setText(folderNoteCounts.get(position).toString());
 
         // Delete Part 1
-//        localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {
-//            this.deleteFolderDialog(folders.get(position).folder);
-//        });
+
         localCardView.setOnClickListener(v -> {
             Intent i = new Intent(context, NoteListActivity.class);
             i.putExtra("data", folders.get(position));
@@ -112,27 +110,8 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     public int getItemCount() {
         return folders.size();
     }
-            // Delete Part 1
-//    private void deleteFolderDialog(Folder folder) {
-//        // create a dialog box from layout using layout inflater.
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        LayoutInflater layoutInflater = LayoutInflater.from(context);
-//        View view = layoutInflater.inflate(R.layout.dialog_delete_folder, null);
-//        builder.setView(view);
-//        final AlertDialog alertDialog = builder.create();
-//        //following is to disable dismiss if user touches outside the dialog box area
-//        alertDialog.setCanceledOnTouchOutside(false);
-//        //following is to add transparent background for roundedges other wise white corner will be shown
-//        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        alertDialog.show();
-//        view.findViewById(R.id.cancel_folder_delete_dialog_bt).setOnClickListener(v -> {
-//            alertDialog.dismiss();
-//        });
-//        view.findViewById(R.id.delete_folder_dialog_bt).setOnClickListener(v -> {
-//            folderViewModel.delete(folder);
-//            alertDialog.dismiss();
-//        });
-//    }
+            // Delete Part 2
+
 
     public void setData(List<FolderWithNotes> data) {
         if (data != null) {

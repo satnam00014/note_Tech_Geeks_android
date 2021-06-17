@@ -75,8 +75,8 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             intent.putExtra("folder", folder);
             context.startActivity(intent);
         });
-        // Delete Part 2
-//        localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(notes.get(position));});
+        // Delete Part 3
+
     }
 
     @Override
@@ -127,27 +127,8 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             this.currentCardView = cardView;
         }
     }
-        // Delete part 2
-//    private void deleteNoteDialog(Note note){
-//        // create a dialog box from layout using layout inflater.
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        LayoutInflater layoutInflater = LayoutInflater.from(context);
-//        View view = layoutInflater.inflate(R.layout.dialog_delete_note, null);
-//        builder.setView(view);
-//        final AlertDialog alertDialog = builder.create();
-//        //following is to disable dismiss if user touches outside the dialog box area
-//        alertDialog.setCanceledOnTouchOutside(false);
-//        //following is to add transparent background for roundedges other wise white corner will be shown
-//        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        alertDialog.show();
-//        view.findViewById(R.id.cancel_note_delete_dialog_bt).setOnClickListener(v -> {alertDialog.dismiss();});
-//        view.findViewById(R.id.delete_note_dialog_bt).setOnClickListener(v -> {
-//            noteViewModel.delete(note);
-//            notes.remove(note);
-//            notifyDataSetChanged();
-//            alertDialog.dismiss();
-//        });
-//    }
+        // Delete part 4
+
 
     public void setData(FolderWithNotes data){
         if (data != null) {

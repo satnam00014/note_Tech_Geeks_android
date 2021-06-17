@@ -68,12 +68,13 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private static final int FASTEST_INTERVAL = 3000; // 3 seconds
     private static final int REQUEST_CODE = 1;
     private LatLng userLatLng;
+    private String photoPath;
+    private String audioPath;
     private Location currentLocation;
     private boolean attachLocation = false;
     private Button cancelButton;
     private Button saveButton;
     private Switch locationSwitch;
-    private String photoPath;
 
     NoteViewModel noteViewModel;
     private int folderId;
@@ -117,6 +118,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         locationSwitch = findViewById(R.id.add_location_switch);
 
+        bindingLocationClient();
 
 
         // Cancel button
@@ -161,13 +163,21 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         saveButton.setOnClickListener(v -> {
             if (!titleEditText.getText().toString().isEmpty() && !contentEditText.getText().toString().isEmpty()){
                 String dateTime = formatter.format(new Date());
-                Note newNote = new Note(folderId, titleEditText.getText().toString(), contentEditText.getText().toString(), dateTime);
+                Note newNote = new Note(folderId, contentEditText.getText().toString(), titleEditText.getText().toString(), dateTime);
                 if(locationSwitch.isChecked()){
                     newNote.setLocation(currentLocation.getLongitude() + " " + currentLocation.getLatitude());
                 }
-
+                if (photoPath != null){
+                    newNote.setImageURL(photoPath);
+                }
+                if(audioPath != null){
+                    newNote.setVoiceURL(audioPath);
+                }
+                noteViewModel.insert(newNote);
+            }else{
+                Toast.makeText(this, "Title and content not be null", Toast.LENGTH_SHORT).show();
             }
-
+            startActivity(new Intent(this, MainActivity.class));
         });
     }
     private File createImageFile() throws IOException {
@@ -365,12 +375,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
         }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bindingLocationClient();
-    }
 
     private void bindingLocationClient() {
         //following is to return if google play service is not installed.
