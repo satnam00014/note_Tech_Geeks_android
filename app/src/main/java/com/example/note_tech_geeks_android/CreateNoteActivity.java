@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,9 @@ import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import android.media.AudioManager;
+import android.media.MediaRecorder;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -48,7 +52,13 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private boolean attachLocation = false;
     private int REQUEST_CODE_CAMERA = 100;
     private int REQUEST_CODE_GALLERY = 110;
+    private int REQUEST_CODE_AUDIO = 120;
     private ImageView imageView;
+
+    MediaRecorder mediaRecorder;
+    private AudioManager audioManager;
+
+    final private static String RECORDED_FILE = "/audio.3gp";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +86,11 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             intent.setType("image/*");
             startActivityForResult(intent,REQUEST_CODE_GALLERY);
         });
+
+
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+
     }
 
     @Override
@@ -88,7 +103,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 Bitmap bmp = (Bitmap) (backIntent.getExtras().get("data"));
                 imageView.setImageBitmap(bmp);
             }
-            else if (requestCode == REQUEST_CODE_GALLERY)  //back from gallery
+        } else if (requestCode == REQUEST_CODE_GALLERY)  //back from gallery
             {
                 if (resultCode == RESULT_OK) {
                     try {
@@ -104,7 +119,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
         }
-    }
 
     @Override
     protected void onStart() {
