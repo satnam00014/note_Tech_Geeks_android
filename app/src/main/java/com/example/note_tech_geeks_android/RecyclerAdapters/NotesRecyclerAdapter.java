@@ -3,6 +3,7 @@ package com.example.note_tech_geeks_android.RecyclerAdapters;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.note_tech_geeks_android.MoveNoteActivity;
 import com.example.note_tech_geeks_android.R;
 
 import java.util.List;
@@ -58,7 +60,12 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(noteImageView);
         noteName.setText("Sample Title");
         noteDate.setText("Date: dd/mm/yyyy");
-        localCardView.findViewById(R.id.edit_bt_note_card).setOnClickListener(v -> {});
+        localCardView.findViewById(R.id.edit_bt_note_card).setOnClickListener(v -> {
+            Intent intent = new Intent(context, MoveNoteActivity.class);
+            //give note id in place of 25
+            intent.putExtra("noteId",25);
+            context.startActivity(intent);
+        });
         localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(25);});
     }
 

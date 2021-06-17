@@ -36,6 +36,17 @@ public class MainActivity extends AppCompatActivity {
         setRecyclerView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+    }
+
+    // logic to refresh Recycler view data when user return to this activity
+    private void loadData(){
+
+    }
+
     private void createFolderDialog() {
         // create a dialog box from layout using layout inflater.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -94,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view_folder);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //change constructor of adapter accordingly ...
+        //This constructor is just a sample ...
         folderRecyclerAdapter = new FolderRecyclerAdapter(new ArrayList<>(),this,this);
         recyclerView.setAdapter(folderRecyclerAdapter);
 

@@ -31,6 +31,19 @@ public class NoteListActivity extends AppCompatActivity {
         //setting for recycler view and adapter for that
         setRecyclerView();
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+    }
+
+    // logic to refresh Recycler view data when user return to this activity
+    private void loadData(){
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // below line is to get our inflater
@@ -61,10 +74,13 @@ public class NoteListActivity extends AppCompatActivity {
         });
         return true;
     }
+
     private void setRecyclerView(){
         recyclerView = findViewById(R.id.recycler_view_notes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //change constructor of adapter accordingly ...
+        //This constructor is just a sample ...
         notesRecyclerAdapter = new NotesRecyclerAdapter(new ArrayList<>(),this,this);
         recyclerView.setAdapter(notesRecyclerAdapter);
 
