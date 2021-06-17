@@ -65,7 +65,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         ImageView folderImageView = localCardView.findViewById(R.id.folder_image_card);
         Glide.with(context).load(R.drawable.folder_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
-        folderName.setText("Sample");
+        folderName.setText("Sample is to great to handle because this is too big");
         numberOfNotes.setText("20 - notes");
         localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {this.deleteFolderDialog(25);});
         localCardView.setOnClickListener(v -> {
