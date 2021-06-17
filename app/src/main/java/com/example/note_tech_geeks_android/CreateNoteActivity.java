@@ -49,6 +49,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,6 +72,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private Button cancelButton;
     private Button saveButton;
     private Switch locationSwitch;
+    private String photoPath;
 
     NoteViewModel noteViewModel;
     private int folderId;
@@ -166,6 +168,21 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             }
 
         });
+    }
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        photoPath = image.getAbsolutePath();
+        return image;
     }
 
     private void enableOrDisableRecording(){
