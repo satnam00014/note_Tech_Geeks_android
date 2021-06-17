@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.note_tech_geeks_android">
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -10,8 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Note_Tech_Geeks_android">
-        <activity android:name=".CreateNoteActivity"
-            android:theme="@style/Theme.NoteActivity"></activity>
+        <activity android:name=".EditNoteActivity"
+            android:theme="@style/Theme.NoteActivity"/>
+        <activity
+            android:name=".CreateNoteActivity"
+            android:theme="@style/Theme.NoteActivity" />
         <activity android:name=".MoveNoteActivity" />
         <activity android:name=".NoteListActivity" />
         <activity android:name=".MainActivity">
@@ -21,10 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDbEKphp3T1yTJzg-5I3-5NAHsPvIHG52E" />
-
     </application>
 
 </manifest>

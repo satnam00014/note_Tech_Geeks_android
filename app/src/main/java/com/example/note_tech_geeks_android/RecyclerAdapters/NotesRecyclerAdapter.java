@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.note_tech_geeks_android.EditNoteActivity;
 import com.example.note_tech_geeks_android.MoveNoteActivity;
 import com.example.note_tech_geeks_android.R;
 
@@ -32,13 +33,16 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     List<String> totalNotes;
     Context context;
     Activity noteListActivity;
+    int folderId;
 
-    public NotesRecyclerAdapter(List<String> notesList, Context context,Activity noteListActivity) {
+    public NotesRecyclerAdapter(List<String> notesList, Context context,Activity noteListActivity,int folderId) {
         this.notes = notesList;
         this.totalNotes = notesList;
         this.context = context;
         //following is passed to access titlebar or similar properties from adapter.
         this.noteListActivity = noteListActivity;
+        //can perform search using the folder id.
+        this.folderId = folderId;
     }
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -67,6 +71,12 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             context.startActivity(intent);
         });
         localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(25);});
+        localCardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EditNoteActivity.class);
+            //give note id in place of 25
+            intent.putExtra("noteId",25);
+            context.startActivity(intent);
+        });
     }
 
     @Override

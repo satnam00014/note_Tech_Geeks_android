@@ -21,11 +21,14 @@ public class NoteListActivity extends AppCompatActivity {
     //reference for recyclerView and adapter for that
     private RecyclerView recyclerView;
     private NotesRecyclerAdapter notesRecyclerAdapter;
+    private int folderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_list);
+        //noteId is id of note from previous activity which we want to move.
+        folderId = getIntent().getIntExtra("folderId",-1);
 
         findViewById(R.id.add_note_btn).setOnClickListener(v -> {startActivity(new Intent(this,CreateNoteActivity.class));});
 
@@ -82,7 +85,7 @@ public class NoteListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //change constructor of adapter accordingly ...
         //This constructor is just a sample ...
-        notesRecyclerAdapter = new NotesRecyclerAdapter(new ArrayList<>(),this,this);
+        notesRecyclerAdapter = new NotesRecyclerAdapter(new ArrayList<>(),this,this,folderId);
         recyclerView.setAdapter(notesRecyclerAdapter);
 
         this.setTitle("0 - Notes");

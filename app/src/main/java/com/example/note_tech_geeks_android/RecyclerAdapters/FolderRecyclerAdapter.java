@@ -68,7 +68,12 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         folderName.setText("Sample");
         numberOfNotes.setText("20 - notes");
         localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {this.deleteFolderDialog(25);});
-        localCardView.setOnClickListener(v -> {context.startActivity(new Intent(context, NoteListActivity.class));});
+        localCardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, NoteListActivity.class);
+            //give folder id in place of 25
+            intent.putExtra("folderId",25);
+            context.startActivity(intent);
+        });
     }
 
     @Override
