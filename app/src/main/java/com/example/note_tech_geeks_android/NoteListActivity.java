@@ -1,51 +1,44 @@
 package com.example.note_tech_geeks_android;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.note_tech_geeks_android.RecyclerAdapters.FolderRecyclerAdapter;
-import com.example.note_tech_geeks_android.RecyclerAdapters.NotesRecyclerAdapter;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.note_tech_geeks_android.RecyclerAdapters.NotesRecyclerAdapter;
+import com.example.note_tech_geeks_android.models.FolderWithNotes;
+import com.example.note_tech_geeks_android.viewmodel.FolderViewModel;
 
 public class NoteListActivity extends AppCompatActivity {
 
     //reference for recyclerView and adapter for that
     private RecyclerView recyclerView;
     private NotesRecyclerAdapter notesRecyclerAdapter;
-    private int folderId;
+    private FolderWithNotes folderWithNotes;
+    private FolderViewModel folderViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_list);
-        //noteId is id of note from previous activity which we want to move.
-        folderId = getIntent().getIntExtra("folderId",-1);
-
-        findViewById(R.id.add_note_btn).setOnClickListener(v -> {startActivity(new Intent(this,CreateNoteActivity.class));});
+        folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
+        folderWithNotes = (FolderWithNotes) getIntent().getSerializableExtra("data");
+        findViewById(R.id.add_note_btn).setOnClickListener(v -> {
+            Intent i = new Intent(this, CreateNoteActivity.class);
+            i.putExtra("folderId", folderWithNotes.folder.getId());
+            startActivity(i);
+        });
 
         //setting for recycler view and adapter for that
         setRecyclerView();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadData();
-    }
-
-    // logic to refresh Recycler view data when user return to this activity
-    private void loadData(){
-
+        this.setTitle("Notes");
     }
 
     @Override
@@ -72,22 +65,20 @@ public class NoteListActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //create filter class before apply below line otherwise app will crash
-                //notesRecyclerAdapter.getFilter().filter(newText);
-                return true;
+                notesRecyclerAdapter.getFilter().filter(newText);
+                return false;
             }
         });
         return true;
     }
 
-    private void setRecyclerView(){
+    private void setRecyclerView() {
         recyclerView = findViewById(R.id.recycler_view_notes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //change constructor of adapter accordingly ...
-        //This constructor is just a sample ...
-        notesRecyclerAdapter = new NotesRecyclerAdapter(new ArrayList<>(),this,this,folderId);
+        notesRecyclerAdapter = new NotesRecyclerAdapter(this);
         recyclerView.setAdapter(notesRecyclerAdapter);
+        notesRecyclerAdapter.setData(folderWithNotes);
 
-        this.setTitle("0 - Notes");
     }
 }
