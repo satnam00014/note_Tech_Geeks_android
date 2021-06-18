@@ -14,13 +14,22 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.note_tech_geeks_android.MainActivity;
+import com.example.note_tech_geeks_android.MoveNoteActivity;
 import com.example.note_tech_geeks_android.NoteListActivity;
 import com.example.note_tech_geeks_android.R;
+import com.example.note_tech_geeks_android.models.Folder;
+import com.example.note_tech_geeks_android.models.FolderWithNotes;
+import com.example.note_tech_geeks_android.models.Note;
+import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecyclerAdapter.ViewHolder> implements Filterable {
