@@ -33,18 +33,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecyclerAdapter.ViewHolder> implements Filterable {
-
-    List<String > folders;
+    NoteViewModel noteViewModel;
+    List<FolderWithNotes> folders;
     Context context;
-    //activity reference is need to close current activity after moving note to a folder.
-    Activity parentActivity;
-    int noteId;
+    Note note;
+    Folder folder;
 
-    public MoveNoteRecyclerAdapter(List<String> folderList, Context context,Activity parentActivity,int noteId) {
-        this.folders = folderList;
+    public MoveNoteRecyclerAdapter(Context context,Note note, Folder folder) {
+        this.folders = new ArrayList<>();
         this.context = context;
-        this.parentActivity = parentActivity;
-        this.noteId = noteId;
+        this.note = note;
+        this.folder = folder;
+        noteViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(NoteViewModel.class);
     }
 
     @NonNull
