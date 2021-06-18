@@ -25,7 +25,9 @@ import com.example.note_tech_geeks_android.NoteListActivity;
 import com.example.note_tech_geeks_android.R;
 import com.example.note_tech_geeks_android.models.Folder;
 import com.example.note_tech_geeks_android.models.FolderWithNotes;
+import com.example.note_tech_geeks_android.models.Note;
 import com.example.note_tech_geeks_android.viewmodel.FolderViewModel;
+import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,8 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
     List<FolderWithNotes> folders;
     List<FolderWithNotes> totalFolders;
     List<Integer> folderNoteCounts;
+    NoteViewModel noteViewModel;
+
     Context context;
 
     public FolderRecyclerAdapter(Context context) {
@@ -42,6 +46,7 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         this.folders = new ArrayList<>();
         this.context = context;
         this.folderNoteCounts = new ArrayList<>();
+        this.noteViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(NoteViewModel.class);
     }
 
     @Override
@@ -99,8 +104,9 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
 
         // Delete Part 1
         localCardView.findViewById(R.id.delete_bt_folder_card).setOnClickListener(v -> {
-            this.deleteFolderDialog(folders.get(position).folder);
+            this.deleteFolderDialog(folders.get(position));
         });
+
         localCardView.setOnClickListener(v -> {
             Intent i = new Intent(context, NoteListActivity.class);
             i.putExtra("data", folders.get(position));
@@ -113,32 +119,35 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
         return folders.size();
     }
             // Delete Part 2
-
-    private void deleteFolderDialog(Folder folder) {
-        // create a dialog box from layout using layout inflater.
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.dialog_delete_folder, null);
-        builder.setView(view);
-        final AlertDialog alertDialog = builder.create();
-        //following is to disable dismiss if user touches outside the dialog box area
-        alertDialog.setCanceledOnTouchOutside(false);
-        //following is to add transparent background for roundedges other wise white corner will be shown
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.show();
-        view.findViewById(R.id.cancel_folder_delete_dialog_bt).setOnClickListener(v -> {
-            alertDialog.dismiss();
-        });
-        view.findViewById(R.id.delete_folder_dialog_bt).setOnClickListener(v -> {
-            folderViewModel.delete(folder);
-            alertDialog.dismiss();
-        });
-    }
+            private void deleteFolderDialog(FolderWithNotes folderWithNotes) {
+                // create a dialog box from layout using layout inflater.
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                View view = layoutInflater.inflate(R.layout.dialog_delete_folder, null);
+                builder.setView(view);
+                final AlertDialog alertDialog = builder.create();
+                //following is to disable dismiss if user touches outside the dialog box area
+                alertDialog.setCanceledOnTouchOutside(false);
+                //following is to add transparent background for roundedges other wise white corner will be shown
+                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                alertDialog.show();
+                view.findViewById(R.id.cancel_folder_delete_dialog_bt).setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                });
+                view.findViewById(R.id.delete_folder_dialog_bt).setOnClickListener(v -> {
+                    folderViewModel.delete(folderWithNotes.folder);
+                    for (Note note: folderWithNotes.notes){
+                        noteViewModel.delete(note);
+                    }
+                    alertDialog.dismiss();
+                });
+            }
 
     public void setData(List<FolderWithNotes> data) {
         if (data != null) {
             folders.clear();
             folders.addAll(data);
+            this.folderNoteCounts.clear();
             getFolderNotesCount(data);
             notifyDataSetChanged();
         } else {

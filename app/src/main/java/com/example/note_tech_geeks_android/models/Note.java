@@ -1,5 +1,7 @@
 package com.example.note_tech_geeks_android.models;
 
+import android.graphics.Bitmap;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -15,6 +17,7 @@ public class Note implements Serializable {
     private String noteContent;
     private String noteDate;
     private String imageURL;
+//    private Bitmap image;
     private String voiceURL;
     private String location;
     private double latitude;

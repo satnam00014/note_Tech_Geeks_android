@@ -66,6 +66,7 @@ public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecycl
         Glide.with(context).load(R.drawable.folder_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
         folderName.setText(folders.get(position).folder.getTitle());
+        numberOfNotes.setText("");
         localCardView.setOnClickListener(v -> {
             //Logic to move note.
             //following line is to close activity after note was moved.

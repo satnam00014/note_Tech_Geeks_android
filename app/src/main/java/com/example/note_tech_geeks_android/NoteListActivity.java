@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -13,9 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.note_tech_geeks_android.RecyclerAdapters.NotesRecyclerAdapter;
 import com.example.note_tech_geeks_android.models.FolderWithNotes;
+import com.example.note_tech_geeks_android.models.Note;
 import com.example.note_tech_geeks_android.viewmodel.FolderViewModel;
 
-public class NoteListActivity extends AppCompatActivity {
+public class NoteListActivity extends AppCompatActivity  implements NotesRecyclerAdapter.OnNoteClickListener {
 
     //reference for recyclerView and adapter for that
     private RecyclerView recyclerView;
@@ -45,6 +47,7 @@ public class NoteListActivity extends AppCompatActivity {
         super.onResume();
         setRecyclerView();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,14 +106,21 @@ public class NoteListActivity extends AppCompatActivity {
         return true;
     }
 
+
     private void setRecyclerView() {
         recyclerView = findViewById(R.id.recycler_view_notes);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        notesRecyclerAdapter = new NotesRecyclerAdapter(this);
+        notesRecyclerAdapter = new NotesRecyclerAdapter(this, this);
         recyclerView.setAdapter(notesRecyclerAdapter);
         notesRecyclerAdapter.setData(folderWithNotes);
         notesRecyclerAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onNoteClick(Note note) {
+        Intent i = new Intent(this, EditNoteActivity.class);
+        i.putExtra("noteId", note.getId());
+        this.startActivity(i);
+    }
 }

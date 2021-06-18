@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -31,6 +32,7 @@ import com.example.note_tech_geeks_android.models.Folder;
 import com.example.note_tech_geeks_android.models.FolderWithNotes;
 import com.example.note_tech_geeks_android.models.Note;
 import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,9 +48,13 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     List<Note> totalNotes;
     Context context;
     Folder folder;
-    public NotesRecyclerAdapter(Context context) {
+    private final OnNoteClickListener onNoteClickListener;
+
+    public NotesRecyclerAdapter(Context context, OnNoteClickListener onNoteClickListener) {
         this.notes = new ArrayList<>();
         this.context = context;
+        this.onNoteClickListener = onNoteClickListener;
+
         noteViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(NoteViewModel.class);
     }
     @Override
@@ -61,28 +67,20 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        //instance of card on which we are performing operations.
-        CardView localCardView = holder.currentCardView;
-        TextView noteName = localCardView.findViewById(R.id.note_name_card);
-        TextView noteDate = localCardView.findViewById(R.id.note_date_card);
-        ImageView noteImageView = localCardView.findViewById(R.id.note_image_card);
         Glide.with(context).load(R.drawable.note_icon)
-                .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(noteImageView);
-        noteName.setText(notes.get(position).getNoteTitle());
-        noteDate.setText("Date: " + notes.get(position).getNoteDate());
-        localCardView.findViewById(R.id.edit_bt_note_card).setOnClickListener(v -> {
+                .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(holder.noteImageView);
+        holder.noteName.setText(notes.get(position).getNoteTitle());
+        holder.noteDate.setText("Date: " + notes.get(position).getNoteDate());
+        holder.editButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, MoveNoteActivity.class);
             intent.putExtra("note",notes.get(position));
             intent.putExtra("folder", folder);
             context.startActivity(intent);
         });
-        localCardView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, EditNoteActivity.class);
-            intent.putExtra("noteId",notes.get(position).getId());
-            context.startActivity(intent);
-        });
+
+//        holder.deleteButton.setOnClickListener(v -> {this.deleteNoteDialog(notes.get(position));});
         // Delete Part 3
-        localCardView.findViewById(R.id.delete_bt_note_card).setOnClickListener(v -> {this.deleteNoteDialog(notes.get(position));});
+        holder.deleteButton.setOnClickListener(v -> {this.deleteNoteDialog(notes.get(position));});
     }
 
     @Override
@@ -125,13 +123,31 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     };
 
     // this is the view holder which holds the view
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView currentCardView;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final TextView noteName, noteDate;
+        private final ImageView noteImageView;
+        private final FloatingActionButton editButton, deleteButton;
 
         public ViewHolder(@NonNull CardView cardView) {
             super(cardView);
-            this.currentCardView = cardView;
+            noteName = cardView.findViewById(R.id.note_name_card);
+            noteDate = cardView.findViewById(R.id.note_date_card);
+            noteImageView = cardView.findViewById(R.id.note_image_card);
+            editButton = cardView.findViewById(R.id.edit_bt_note_card);
+            deleteButton = cardView.findViewById(R.id.delete_bt_note_card);
+            cardView.setOnClickListener(this);
+
+
         }
+
+        @Override
+        public void onClick(View v) {
+            onNoteClickListener.onNoteClick(notes.get(getAdapterPosition()));
+
+        }
+    }
+    public interface OnNoteClickListener {
+        void onNoteClick(Note note);
     }
         // Delete part 4
         private void deleteNoteDialog(Note note){
@@ -154,6 +170,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
                 alertDialog.dismiss();
             });
         }
+
 
     public void setData(FolderWithNotes data){
         if (data != null) {

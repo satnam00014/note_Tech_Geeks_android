@@ -115,6 +115,6 @@ public class MainActivity extends AppCompatActivity {
         folderViewModel.getAllFolders().observe(this, data -> folderRecyclerAdapter.setData(data));
         recyclerView.setAdapter(folderRecyclerAdapter);
 
-        this.setTitle("Folders");
+
     }
 }
