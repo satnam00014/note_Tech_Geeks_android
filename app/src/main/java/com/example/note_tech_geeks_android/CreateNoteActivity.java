@@ -1,23 +1,17 @@
 package com.example.note_tech_geeks_android;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,8 +26,13 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import android.media.AudioManager;
-import android.media.MediaRecorder;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.note_tech_geeks_android.models.Note;
 import com.example.note_tech_geeks_android.viewmodel.NoteViewModel;
@@ -51,6 +50,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -59,14 +59,16 @@ import java.util.TimerTask;
 
 public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final int UPDATE_INTERVAL = 5000; // 5 seconds
+    private static final int FASTEST_INTERVAL = 3000; // 3 seconds
+    private static final int REQUEST_CODE = 1;
+    final private static String RECORDED_FILE = "/audio.3gp";
+    NoteViewModel noteViewModel;
     private GoogleMap mMap;
     // Location Demo with FUSED LOCATION PROVIDER CLIENT
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private static final int UPDATE_INTERVAL = 5000; // 5 seconds
-    private static final int FASTEST_INTERVAL = 3000; // 3 seconds
-    private static final int REQUEST_CODE = 1;
     private LatLng userLatLng;
     private String photoPath;
     private String audioPath;
@@ -75,30 +77,20 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private Button cancelButton;
     private Button saveButton;
     private Switch locationSwitch;
-
-    NoteViewModel noteViewModel;
     private int folderId;
     private EditText titleEditText;
     private EditText contentEditText;
-    private int REQUEST_CODE_CAMERA = 100;
-    private int REQUEST_CODE_GALLERY = 110;
-    private int REQUEST_CODE_AUDIO = 120;
-
+    private final int REQUEST_CODE_CAMERA = 100;
+    private final int REQUEST_CODE_GALLERY = 110;
+    private final int REQUEST_CODE_AUDIO = 120;
     private ImageView imageView;
-
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
-
     private AudioManager audioManager;
-
     private String pathForAudio = "";
-
     private boolean isRecording = false;
     private boolean isRecordingPlaying = false;
     private boolean isRecordingPlayFirstTime = true;
-
-    final private static String RECORDED_FILE = "/audio.3gp";
-
     private ImageButton btnRecord;
     private ImageButton btnPlay;
     private SeekBar seekBarAudio;
@@ -116,7 +108,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         //shown on map
         bindLocationSwitch();
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
-        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         locationSwitch = findViewById(R.id.add_location_switch);
 
         bindingLocationClient();
@@ -124,11 +116,13 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
 
         // Cancel button
         cancelButton = findViewById(R.id.cancel_button_create_note);
-        cancelButton.setOnClickListener(v -> { this.finish();});
+        cancelButton.setOnClickListener(v -> {
+            this.finish();
+        });
 
         // Save button
 
-        folderId = getIntent().getIntExtra("folderId",1);
+        folderId = getIntent().getIntExtra("folderId", 1);
         saveButton = findViewById(R.id.save_button_create_note);
         titleEditText = findViewById(R.id.note_title_create);
         contentEditText = findViewById(R.id.note_detail_create);
@@ -139,18 +133,18 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         findViewById(R.id.camera_button_create).setOnClickListener(v -> {
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent,REQUEST_CODE_CAMERA);
+            startActivityForResult(intent, REQUEST_CODE_CAMERA);
         });
 
-        findViewById(R.id.gallery_button_create).setOnClickListener(v ->{
+        findViewById(R.id.gallery_button_create).setOnClickListener(v -> {
 
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
-            startActivityForResult(intent,REQUEST_CODE_GALLERY);
+            startActivityForResult(intent, REQUEST_CODE_GALLERY);
         });
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
 
         btnRecord = findViewById(R.id.record_button_create);
@@ -162,25 +156,26 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
 
 
         saveButton.setOnClickListener(v -> {
-            if (!titleEditText.getText().toString().isEmpty() && !contentEditText.getText().toString().isEmpty()){
+            if (!titleEditText.getText().toString().isEmpty() && !contentEditText.getText().toString().isEmpty()) {
                 String dateTime = formatter.format(new Date());
                 Note newNote = new Note(folderId, contentEditText.getText().toString(), titleEditText.getText().toString(), dateTime);
-                if(locationSwitch.isChecked()){
+                if (locationSwitch.isChecked()) {
                     newNote.setLocation(currentLocation.getLongitude() + " " + currentLocation.getLatitude());
                 }
-                if (photoPath != null){
+                if (photoPath != null) {
                     newNote.setImageURL(photoPath);
                 }
-                if(audioPath != null){
+                if (audioPath != null) {
                     newNote.setVoiceURL(audioPath);
                 }
                 noteViewModel.insert(newNote);
-            }else{
+            } else {
                 Toast.makeText(this, "Title and content not be null", Toast.LENGTH_SHORT).show();
             }
             startActivity(new Intent(this, MainActivity.class));
         });
     }
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -196,6 +191,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         photoPath = image.getAbsolutePath();
         return image;
     }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -226,7 +222,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         this.sendBroadcast(mediaScanIntent);
     }
 
-    private void enableOrDisableRecording(){
+    private void enableOrDisableRecording() {
 
         if (!checkPermissionDevice())
             requestPermissionForAudio();
@@ -236,7 +232,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             public void onClick(View v) {
                 if (checkPermissionDevice()) {
 
-                    if(!isRecording){
+                    if (!isRecording) {
 
                         if (mediaPlayer != null) {
 
@@ -268,9 +264,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         }
 
                         Toast.makeText(CreateNoteActivity.this, "Recording...", Toast.LENGTH_SHORT).show();
-                    }
-
-                    else{
+                    } else {
 
                         isRecording = false;
                         btnPlay.setEnabled(true);
@@ -285,19 +279,19 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         });
     }
 
-    private void playOrPauseRecording(){
+    private void playOrPauseRecording() {
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (!isRecordingPlaying){
+                if (!isRecordingPlaying) {
 
                     isRecordingPlaying = true;
                     btnRecord.setEnabled(false);
                     btnPlay.setImageResource(android.R.drawable.ic_media_pause);
 
-                    if (isRecordingPlayFirstTime){
+                    if (isRecordingPlayFirstTime) {
 
                         isRecordingPlayFirstTime = false;
 
@@ -327,8 +321,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                     }
 
                     mediaPlayer.start();
-                }
-                else{
+                } else {
 
                     isRecordingPlaying = false;
                     btnPlay.setImageResource(android.R.drawable.ic_media_play);
@@ -338,7 +331,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         });
     }
 
-    private void setSeekBar(){
+    private void setSeekBar() {
 
         seekBarAudio = (SeekBar) findViewById(R.id.search_bar_create_note);
         seekBarAudio.setMax(mediaPlayer.getDuration());
@@ -368,6 +361,31 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             }
         }, 0, 300);
     }
+    private String saveToInternalStorage(Bitmap bitmapImage){
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + ".png";
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,imageFileName);
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return directory.getAbsolutePath() + "/"+ imageFileName;
+    }
 
 
     @Override
@@ -378,24 +396,22 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         {
             if (resultCode == RESULT_OK) {
                 Bitmap bmp = (Bitmap) (backIntent.getExtras().get("data"));
+                photoPath = saveToInternalStorage(bmp);
                 imageView.setImageBitmap(bmp);
             }
-        } else if (requestCode == REQUEST_CODE_GALLERY)  //back from gallery
-            {
-                if (resultCode == RESULT_OK) {
-                    try {
-                        Uri uri = backIntent.getData();
-                        //following to convert from uri to bitmap
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                        //following is to get and show image through URI in image view
-                        //imv1.setImageURI(uri);
-                        imageView.setImageBitmap(bitmap);
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-                }
+        } else if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
+            try {
+                Uri uri = backIntent.getData();
+                //following to convert from uri to bitmap
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                //following is to get and show image through URI in image view
+                photoPath = saveToInternalStorage(bitmap);
+                imageView.setImageBitmap(bitmap);
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }
+    }
 
     private void bindingLocationClient() {
         //following is to return if google play service is not installed.
@@ -417,7 +433,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             return;
         //following is to get last location;
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location!=null)
+            if (location != null)
                 currentLocation = location;
         });
         //following is the location request for call back on fused location client
@@ -437,7 +453,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
-    private void bindLocationSwitch(){
+    private void bindLocationSwitch() {
         // instantiate the fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (!isPermissionGranted()) {
@@ -445,7 +461,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         }
         //following switch to show location of user
         ((Switch) findViewById(R.id.add_location_switch)).setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 buttonView.setChecked(false);
                 return;
             }
@@ -479,8 +495,8 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         if (mMap == null)
             return;
         mMap.setMyLocationEnabled(true);
-        userLatLng = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,15));
+        userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
     }
 
     @Override
@@ -495,7 +511,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    private boolean isPermissionGranted(){
+    private boolean isPermissionGranted() {
 
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
@@ -509,7 +525,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         mediaRecorder.setOutputFile(pathForAudio);
     }
 
-    private void requestPermission(){
+    private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
     }
 
