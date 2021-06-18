@@ -65,13 +65,14 @@ public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecycl
         ImageView folderImageView = localCardView.findViewById(R.id.folder_image_move_card);
         Glide.with(context).load(R.drawable.folder_icon)
                 .apply(RequestOptions.circleCropTransform()).thumbnail(0.3f).into(folderImageView);
-        folderName.setText("Folder");
-        numberOfNotes.setText("Total notes - 20");
+        folderName.setText(folders.get(position).folder.getTitle());
         localCardView.setOnClickListener(v -> {
-            Toast.makeText(context,"Folder "+(position+1)+" is clicked",Toast.LENGTH_SHORT).show();
             //Logic to move note.
             //following line is to close activity after note was moved.
-            parentActivity.finish();
+            note.setFolderId(folders.get(position).folder.getId());
+            noteViewModel.update(note);
+            ((MoveNoteActivity)context).finish();
+            context.startActivity(new Intent(context, MainActivity.class));
         });
     }
 
