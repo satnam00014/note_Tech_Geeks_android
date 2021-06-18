@@ -93,13 +93,13 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
 
     private AudioManager audioManager;
 
-    private String pathForAudio = "";
+    private String pathForAudio ;
 
     private boolean isRecording = false;
     private boolean isRecordingPlaying = false;
     private boolean isRecordingPlayFirstTime = true;
 
-    final private static String RECORDED_FILE = "/audio.3gp";
+    final private static String RECORDED_FILE = "/audio";
 
     private ImageButton btnRecord;
     private ImageButton btnPlay;
@@ -182,8 +182,8 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             }
             if (imageData!=null)
                 newNote.setImageData(imageData);
-            if(audioPath != null){
-                newNote.setVoiceURL(audioPath);
+            if(pathForAudio != null || !pathForAudio.trim().isEmpty()){
+                newNote.setVoiceURL(pathForAudio);
             }
             noteViewModel.insert(newNote);
             startActivity(new Intent(this, MainActivity.class));
@@ -265,11 +265,11 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         isRecording = true;
                         btnPlay.setEnabled(false);
                         btnRecord.setImageResource(android.R.drawable.ic_media_pause);
-
-                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-
-                        pathForAudio = Environment.getExternalStorageDirectory().getAbsolutePath() + timeStamp
-                                + RECORDED_FILE;
+                        if (pathForAudio == null || pathForAudio.trim().isEmpty()){
+                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                            pathForAudio = Environment.getExternalStorageDirectory().getAbsolutePath()
+                                    + RECORDED_FILE + timeStamp + ".3gp";
+                        }
 
                         Log.d("path", "onClick: " + pathForAudio);
 

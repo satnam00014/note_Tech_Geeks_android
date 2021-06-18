@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -77,7 +78,7 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
             longitude = note.getLongitude();
         }else
             ((TextView)findViewById(R.id.textview_map_edit)).setText("No Location for this note.");
-        if (note.getVoiceURL()!=null){
+        if (note.getVoiceURL()!=null || !note.getVoiceURL().trim().isEmpty()){
             audioPath = note.getVoiceURL();
         }else
             ((TextView)findViewById(R.id.textview_audio_edit)).setText("No Recording for this note.");
@@ -102,6 +103,7 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
             Toast.makeText(this, "No audio available", Toast.LENGTH_SHORT).show();
             return;
         }
+        Log.d("path", "EDIT ONCLICK: " + audioPath);
 
         if(!isRecordingPlaying){
 
