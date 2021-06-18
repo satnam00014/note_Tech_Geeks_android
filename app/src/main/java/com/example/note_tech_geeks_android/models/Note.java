@@ -17,12 +17,40 @@ public class Note implements Serializable {
     private String imageURL;
     private String voiceURL;
     private String location;
+    private double latitude;
+    private double longitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    private byte[] imageData;
 
     public Note(int folderId, String noteContent, String noteTitle, String noteDate) {
         this.folderId = folderId;
         this.noteContent = noteContent;
         this.noteTitle = noteTitle;
         this.noteDate = noteDate;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
     }
 
     public int getId() {

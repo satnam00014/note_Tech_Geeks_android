@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.note_tech_geeks_android.EditNoteActivity;
 import com.example.note_tech_geeks_android.MoveNoteActivity;
 import com.example.note_tech_geeks_android.NoteListActivity;
 import com.example.note_tech_geeks_android.R;
@@ -73,6 +74,11 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             Intent intent = new Intent(context, MoveNoteActivity.class);
             intent.putExtra("note",notes.get(position));
             intent.putExtra("folder", folder);
+            context.startActivity(intent);
+        });
+        localCardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EditNoteActivity.class);
+            intent.putExtra("noteId",notes.get(position).getId());
             context.startActivity(intent);
         });
         // Delete Part 3

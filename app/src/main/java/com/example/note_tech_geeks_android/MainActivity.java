@@ -43,13 +43,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadData();
+        setRecyclerView();
     }
 
-    // logic to refresh Recycler view data when user return to this activity
-    private void loadData() {
-
-    }
 
     private void createFolderDialog() {
         // create a dialog box from layout using layout inflater.
