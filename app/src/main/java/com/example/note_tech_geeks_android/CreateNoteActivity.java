@@ -151,7 +151,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
 
-
         btnRecord = findViewById(R.id.record_button_create);
         btnPlay = findViewById(R.id.play_button_create);
 
