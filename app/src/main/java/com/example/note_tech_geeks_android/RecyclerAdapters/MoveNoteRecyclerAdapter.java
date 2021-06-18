@@ -78,7 +78,7 @@ public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecycl
 
     @Override
     public int getItemCount() {
-        return 15;
+        return folders.size();
     }
 
     // this is the view holder which holds the view
@@ -96,5 +96,16 @@ public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecycl
         return null;
     }
 
+    public void setData(List<FolderWithNotes> data) {
+        if (data != null) {
+            folders.clear();
+            folders.addAll(data);
+            notifyDataSetChanged();
+        } else {
+            folders = data;
+        }
+
+        folders.remove(folder.getId() - 1);
+    }
 
 }
