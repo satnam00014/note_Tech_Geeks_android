@@ -54,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -132,7 +133,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         titleEditText = findViewById(R.id.note_title_create);
         contentEditText = findViewById(R.id.note_detail_create);
 
-
         imageView = findViewById(R.id.image_note_create);
 
         findViewById(R.id.camera_button_create).setOnClickListener(v -> {
@@ -157,7 +157,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         enableOrDisableRecording();
 
         playOrPauseRecording();
-
 
         saveButton.setOnClickListener(v -> {
             String title = titleEditText.getText().toString().trim();
@@ -267,7 +266,9 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         btnPlay.setEnabled(false);
                         btnRecord.setImageResource(android.R.drawable.ic_media_pause);
 
-                        pathForAudio = Environment.getExternalStorageDirectory().getAbsolutePath()
+                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+
+                        pathForAudio = Environment.getExternalStorageDirectory().getAbsolutePath() + timeStamp
                                 + RECORDED_FILE;
 
                         Log.d("path", "onClick: " + pathForAudio);
