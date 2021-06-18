@@ -50,6 +50,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -103,6 +104,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private ImageButton btnPlay;
     private SeekBar seekBarAudio;
     private Timer seekBarTimer;
+    private byte[] imageData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +120,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         locationSwitch = findViewById(R.id.add_location_switch);
-
-        bindingLocationClient();
-
 
         // Cancel button
         cancelButton = findViewById(R.id.cancel_button_create_note);
@@ -162,25 +161,43 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
 
 
         saveButton.setOnClickListener(v -> {
-            if (!titleEditText.getText().toString().isEmpty() && !contentEditText.getText().toString().isEmpty()){
-                String dateTime = formatter.format(new Date());
-                Note newNote = new Note(folderId, contentEditText.getText().toString(), titleEditText.getText().toString(), dateTime);
-                if(locationSwitch.isChecked()){
-                    newNote.setLocation(currentLocation.getLongitude() + " " + currentLocation.getLatitude());
-                }
-                if (photoPath != null){
-                    newNote.setImageURL(photoPath);
-                }
-                if(audioPath != null){
-                    newNote.setVoiceURL(audioPath);
-                }
-                noteViewModel.insert(newNote);
-            }else{
-                Toast.makeText(this, "Title and content not be null", Toast.LENGTH_SHORT).show();
+            String title = titleEditText.getText().toString().trim();
+            String detail = contentEditText.getText().toString().trim();
+            if (title.isEmpty()) {
+                titleEditText.setError("First Name cannot be empty");
+                titleEditText.requestFocus();
+                return;
             }
-            startActivity(new Intent(this, MainActivity.class));
+            if (detail.isEmpty()) {
+                contentEditText.setError("First Name cannot be empty");
+                contentEditText.requestFocus();
+                return;
+            }
+            String dateTime = formatter.format(new Date());
+            Note newNote = new Note(folderId, detail, title, dateTime);
+            if(locationSwitch.isChecked()){
+                if (currentLocation!=null){
+                    newNote.setLatitude(currentLocation.getLatitude());
+                    newNote.setLongitude(currentLocation.getLongitude());
+                }
+                newNote.setLocation(currentLocation.getLongitude() + " " + currentLocation.getLatitude());
+            }
+            if (imageData!=null)
+                newNote.setImageData(imageData);
+            if(audioPath != null){
+                newNote.setVoiceURL(audioPath);
+            }
+            noteViewModel.insert(newNote);
+            this.finish();
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bindingLocationClient();
+    }
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -196,6 +213,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         photoPath = image.getAbsolutePath();
         return image;
     }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -250,7 +268,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         btnPlay.setEnabled(false);
                         btnRecord.setImageResource(android.R.drawable.ic_media_pause);
 
-                        pathForAudio = getExternalCacheDir().getAbsolutePath()
+                        pathForAudio = Environment.getExternalStorageDirectory().getAbsolutePath()
                                 + RECORDED_FILE;
 
                         Log.d("path", "onClick: " + pathForAudio);
@@ -369,7 +387,6 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         }, 0, 300);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent backIntent) {
         super.onActivityResult(requestCode, resultCode, backIntent);
@@ -377,8 +394,12 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         if (requestCode == REQUEST_CODE_CAMERA)  //back from camera
         {
             if (resultCode == RESULT_OK) {
-                Bitmap bmp = (Bitmap) (backIntent.getExtras().get("data"));
-                imageView.setImageBitmap(bmp);
+                Bitmap bitmap = (Bitmap) (backIntent.getExtras().get("data"));
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
+                imageData = outputStream.toByteArray();
+                imageView.setImageBitmap(bitmap);
+                Toast.makeText(this,"Image added from Camera",Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_CODE_GALLERY)  //back from gallery
             {
@@ -389,7 +410,11 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                         //following is to get and show image through URI in image view
                         //imv1.setImageURI(uri);
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
+                        imageData = outputStream.toByteArray();
                         imageView.setImageBitmap(bitmap);
+                        Toast.makeText(this,"Image added from Gallery",Toast.LENGTH_SHORT).show();
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }

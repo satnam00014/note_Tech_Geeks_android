@@ -88,6 +88,7 @@
                 android:layout_marginBottom="20dp"
                 />
             <ImageView
+                android:id="@+id/imageview_edit"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:tooltipText="Image view for photo"
@@ -160,7 +161,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatSeekBar
-                    android:id="@+id/search_bar_edit"
+                    android:id="@+id/seek_bar_edit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"

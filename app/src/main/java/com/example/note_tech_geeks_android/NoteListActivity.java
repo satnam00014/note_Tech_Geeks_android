@@ -41,6 +41,12 @@ public class NoteListActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setRecyclerView();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // below line is to get our inflater
         MenuInflater inflater = getMenuInflater();
@@ -104,7 +110,7 @@ public class NoteListActivity extends AppCompatActivity {
         notesRecyclerAdapter = new NotesRecyclerAdapter(this);
         recyclerView.setAdapter(notesRecyclerAdapter);
         notesRecyclerAdapter.setData(folderWithNotes);
-
+        notesRecyclerAdapter.notifyDataSetChanged();
     }
 
 }
