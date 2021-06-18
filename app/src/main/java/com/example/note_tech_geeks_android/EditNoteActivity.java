@@ -82,7 +82,7 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
             longitude = note.getLongitude();
         }else
             ((TextView)findViewById(R.id.textview_map_edit)).setText("No Location for this note.");
-        if (note.getVoiceURL()!=null || !note.getVoiceURL().trim().isEmpty()){
+        if (note.getVoiceURL()!=null ){
             audioPath = note.getVoiceURL();
         }else
             ((TextView)findViewById(R.id.textview_audio_edit)).setText("No Recording for this note.");

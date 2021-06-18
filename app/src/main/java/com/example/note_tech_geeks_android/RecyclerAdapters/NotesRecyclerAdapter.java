@@ -186,7 +186,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         ((NoteListActivity)context).setTitle(notes.size() + " - Notes");
     }
     public void sortASC(){
-        Collections.sort(notes, (o1, o2) -> o1.getNoteTitle().compareTo(o2.getNoteTitle()));
+        Collections.sort(notes, (o1, o2) -> o1.getNoteTitle().toLowerCase().compareTo(o2.getNoteTitle().toLowerCase()));
         notifyDataSetChanged();
     }
     public void sortDESC(){
@@ -194,7 +194,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         Collections.reverse(notes);
         notifyDataSetChanged();
     }
-    public void sortDateASC(){
+    public void sortDateDESC(){
         Collections.sort(notes, new Comparator<Note>() {
             DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             @Override
@@ -209,8 +209,8 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         });
         notifyDataSetChanged();
     }
-    public void sortDateDESC(){
-        sortDateASC();
+    public void sortDateASC(){
+        sortDateDESC();
         Collections.reverse(notes);
         notifyDataSetChanged();
     }

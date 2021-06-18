@@ -104,9 +104,6 @@ public class NoteListActivity extends AppCompatActivity  implements NotesRecycle
         });
 
 
-
-
-
         return true;
     }
 
