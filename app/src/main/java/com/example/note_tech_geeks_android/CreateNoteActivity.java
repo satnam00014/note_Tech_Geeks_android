@@ -186,7 +186,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 newNote.setVoiceURL(pathForAudio);
             }
             noteViewModel.insert(newNote);
-            startActivity(new Intent(this, MainActivity.class));
+            this.finish();
         });
     }
 
@@ -267,8 +267,11 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         btnRecord.setImageResource(android.R.drawable.ic_media_pause);
                         if (pathForAudio == null || pathForAudio.trim().isEmpty()){
                             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-                            pathForAudio = Environment.getExternalStorageDirectory().getAbsolutePath()
+                            pathForAudio = CreateNoteActivity.this.getExternalFilesDir(Environment.DIRECTORY_MUSIC).getAbsolutePath()
                                     + RECORDED_FILE + timeStamp + ".3gp";
+                            File file = new File(pathForAudio);
+                            if (file.exists())
+                                Toast.makeText(CreateNoteActivity.this,"file created",Toast.LENGTH_SHORT).show();
                         }
 
                         Log.d("path", "onClick: " + pathForAudio);
@@ -294,6 +297,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                         btnPlay.setEnabled(true);
                         btnRecord.setImageResource(R.drawable.mic_icon);
                         mediaRecorder.stop();
+                        mediaRecorder.release();
 
                         Toast.makeText(CreateNoteActivity.this, "Recording stop ...", Toast.LENGTH_SHORT).show();
                     }

@@ -29,7 +29,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -129,7 +133,7 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
                     Toast.makeText(EditNoteActivity.this, "Audio is Completed...", Toast.LENGTH_SHORT).show();
                 }
             });
-
+            mediaPlayer.start();
             Toast.makeText(EditNoteActivity.this, "Audio is playing...", Toast.LENGTH_SHORT).show();
         }
         else{
@@ -167,7 +171,7 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
             public void run() {
                 seekBarAudio.setProgress(mediaPlayer.getCurrentPosition());
             }
-        }, 0, 300);
+        }, 0, 1000);
     }
 
     private void saveThisNote(){
