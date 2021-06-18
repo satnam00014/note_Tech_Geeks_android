@@ -24,6 +24,7 @@ public class NoteListActivity extends AppCompatActivity  implements NotesRecycle
     private NotesRecyclerAdapter notesRecyclerAdapter;
     private FolderWithNotes folderWithNotes;
     private FolderViewModel folderViewModel;
+    private int folderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class NoteListActivity extends AppCompatActivity  implements NotesRecycle
         setContentView(R.layout.activity_note_list);
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
         folderWithNotes = (FolderWithNotes) getIntent().getSerializableExtra("data");
+        folderId = folderWithNotes.folder.getId();
         findViewById(R.id.add_note_btn).setOnClickListener(v -> {
             Intent i = new Intent(this, CreateNoteActivity.class);
             i.putExtra("folderId", folderWithNotes.folder.getId());
@@ -43,11 +45,13 @@ public class NoteListActivity extends AppCompatActivity  implements NotesRecycle
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        setRecyclerView();
+    protected void onRestart() {
+        super.onRestart();
+        folderViewModel.getFolderWithNotesById(folderId).observe(this, data-> {
+            folderWithNotes = data;
+            setRecyclerView();
+        });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

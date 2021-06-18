@@ -186,7 +186,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 newNote.setVoiceURL(pathForAudio);
             }
             noteViewModel.insert(newNote);
-            startActivity(new Intent(this, MainActivity.class));
+            this.finish();
         });
     }
 

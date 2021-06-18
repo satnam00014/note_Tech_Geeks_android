@@ -142,7 +142,6 @@ public class FolderRecyclerAdapter extends RecyclerView.Adapter<FolderRecyclerAd
                     alertDialog.dismiss();
                 });
             }
-
     public void setData(List<FolderWithNotes> data) {
         if (data != null) {
             folders.clear();
