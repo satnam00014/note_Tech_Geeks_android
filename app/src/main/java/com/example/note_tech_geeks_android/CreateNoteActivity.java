@@ -102,6 +102,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
     private ImageButton btnRecord;
     private ImageButton btnPlay;
     private SeekBar seekBarAudio;
+    private Timer seekBarTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,45 +231,59 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
         if (!checkPermissionDevice())
             requestPermissionForAudio();
 
-            btnRecord.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checkPermissionDevice()) {
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkPermissionDevice()) {
 
-                        if(!isRecording){
+                    if(!isRecording){
 
-                            isRecording = true;
-                            pathForAudio = getExternalCacheDir().getAbsolutePath()
-                                    + RECORDED_FILE;
+                        if (mediaPlayer != null) {
 
-                            Log.d("path", "onClick: " + pathForAudio);
-
-                            setUpMediaRecorder();
-
-                            try {
-                                mediaRecorder.prepare();
-                                mediaRecorder.start();
-                            } catch (IllegalStateException ise) {
-
-                                ise.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            Toast.makeText(CreateNoteActivity.this, "Recording...", Toast.LENGTH_SHORT).show();
+                            mediaPlayer.stop();
+                            mediaPlayer.release();
+                            seekBarTimer.cancel();
+                            isRecordingPlayFirstTime = true;
                         }
 
-                        else{
+                        isRecording = true;
+                        btnPlay.setEnabled(false);
+                        btnRecord.setImageResource(android.R.drawable.ic_media_pause);
 
-                            isRecording = false;
-                            mediaRecorder.stop();
-                            Toast.makeText(CreateNoteActivity.this, "Recording stop ...", Toast.LENGTH_SHORT).show();
+                        pathForAudio = getExternalCacheDir().getAbsolutePath()
+                                + RECORDED_FILE;
+
+                        Log.d("path", "onClick: " + pathForAudio);
+
+                        setUpMediaRecorder();
+
+                        try {
+                            mediaRecorder.prepare();
+                            mediaRecorder.start();
+                        } catch (IllegalStateException ise) {
+
+                            ise.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } else
-                        requestPermission();
-                }
-            });
-        }
+
+                        Toast.makeText(CreateNoteActivity.this, "Recording...", Toast.LENGTH_SHORT).show();
+                    }
+
+                    else{
+
+                        isRecording = false;
+                        btnPlay.setEnabled(true);
+                        btnRecord.setImageResource(R.drawable.mic_icon);
+                        mediaRecorder.stop();
+
+                        Toast.makeText(CreateNoteActivity.this, "Recording stop ...", Toast.LENGTH_SHORT).show();
+                    }
+                } else
+                    requestPermission();
+            }
+        });
+    }
 
     private void playOrPauseRecording(){
 
@@ -279,10 +294,12 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 if (!isRecordingPlaying){
 
                     isRecordingPlaying = true;
+                    btnRecord.setEnabled(false);
+                    btnPlay.setImageResource(android.R.drawable.ic_media_pause);
+
                     if (isRecordingPlayFirstTime){
 
                         isRecordingPlayFirstTime = false;
-                        btnRecord.setEnabled(false);
 
                         mediaPlayer = new MediaPlayer();
                         try {
@@ -301,11 +318,12 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                                 btnRecord.setEnabled(true);
                                 isRecordingPlaying = false;
                                 seekBarAudio.setProgress(0);
-                                Toast.makeText(CreateNoteActivity.this, "Playing Recorded Audio is Completed...", Toast.LENGTH_SHORT).show();
+                                btnPlay.setImageResource(android.R.drawable.ic_media_play);
+                                Toast.makeText(CreateNoteActivity.this, "Audio is Completed...", Toast.LENGTH_SHORT).show();
                             }
                         });
 
-                        Toast.makeText(CreateNoteActivity.this, "Recorded Audio is playing...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateNoteActivity.this, "Audio is playing...", Toast.LENGTH_SHORT).show();
                     }
 
                     mediaPlayer.start();
@@ -313,6 +331,7 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
                 else{
 
                     isRecordingPlaying = false;
+                    btnPlay.setImageResource(android.R.drawable.ic_media_play);
                     mediaPlayer.pause();
                 }
             }
@@ -341,13 +360,15 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        seekBarTimer = new Timer();
+        seekBarTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 seekBarAudio.setProgress(mediaPlayer.getCurrentPosition());
             }
         }, 0, 300);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent backIntent) {
