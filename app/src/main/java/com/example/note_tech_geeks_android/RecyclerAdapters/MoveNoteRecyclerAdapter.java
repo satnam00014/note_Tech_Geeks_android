@@ -73,7 +73,6 @@ public class MoveNoteRecyclerAdapter extends RecyclerView.Adapter<MoveNoteRecycl
             note.setFolderId(folders.get(position).folder.getId());
             noteViewModel.update(note);
             ((MoveNoteActivity)context).finish();
-            context.startActivity(new Intent(context, MainActivity.class));
         });
     }
 
