@@ -182,9 +182,9 @@ public class CreateNoteActivity extends AppCompatActivity implements OnMapReadyC
             }
             if (imageData!=null)
                 newNote.setImageData(imageData);
-//            if(pathForAudio != null || !pathForAudio.trim().isEmpty()){
-//                newNote.setVoiceURL(pathForAudio);
-//            }
+            if(pathForAudio != null || !pathForAudio.trim().isEmpty()){
+                newNote.setVoiceURL(pathForAudio);
+            }
             noteViewModel.insert(newNote);
             this.finish();
         });
