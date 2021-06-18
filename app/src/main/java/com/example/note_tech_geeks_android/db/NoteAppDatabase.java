@@ -38,16 +38,16 @@ public abstract class NoteAppDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 FolderDao folderDao = noteAppDatabase.folderDao();
                 NoteDao noteDao = noteAppDatabase.noteDao();
-                Folder folder = new Folder("Business");
-                folderDao.insertFolder(folder);
-                folder = new Folder("School");
-                folderDao.insertFolder(folder);
-                Note note = new Note(1,"Don't forget send mail to Carolina.", "Mail", new Date().toString());
-                noteDao.insertNote(note);
-                note = new Note(2,"Math exam tomorrow.", "Exam", dateTime);
-                noteDao.insertNote(note);
-                note = new Note(2,"Lorem ipsum.", "Lorem ipsum", dateTime);
-                noteDao.insertNote(note);
+//                Folder folder = new Folder("Business");
+//                folderDao.insertFolder(folder);
+//                folder = new Folder("School");
+//                folderDao.insertFolder(folder);
+//                Note note = new Note(1,"Don't forget send mail to Carolina.", "Mail", new Date().toString());
+//                noteDao.insertNote(note);
+//                note = new Note(2,"Math exam tomorrow.", "Exam", dateTime);
+//                noteDao.insertNote(note);
+//                note = new Note(2,"Lorem ipsum.", "Lorem ipsum", dateTime);
+//                noteDao.insertNote(note);
 
             });
 
