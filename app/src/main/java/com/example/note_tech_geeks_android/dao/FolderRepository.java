@@ -24,6 +24,8 @@ public class FolderRepository {
         return mFolderDao.getFolderNotesCount(id);
     }
 
+    public LiveData<FolderWithNotes> getFolderWithNotesById(int id) {return mFolderDao.getFolderWithNotesById(id);}
+
     public LiveData<List<FolderWithNotes>> getAllFolderWithNotes() {
         return allFolderWithNotes;
     }

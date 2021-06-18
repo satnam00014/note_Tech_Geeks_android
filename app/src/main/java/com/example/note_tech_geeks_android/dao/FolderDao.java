@@ -17,6 +17,9 @@ public interface FolderDao {
     @Query("SELECT * FROM folders")
     LiveData<List<FolderWithNotes>> loadFolderList();
 
+    @Query("SELECT * FROM folders WHERE id=:id")
+    LiveData<FolderWithNotes> getFolderWithNotesById(int id);
+
     @Query("SELECT COUNT(folderId) FROM notes WHERE folderId=:id")
     int getFolderNotesCount(int id);
 

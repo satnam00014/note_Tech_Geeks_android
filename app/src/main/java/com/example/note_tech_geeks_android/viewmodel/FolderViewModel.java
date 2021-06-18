@@ -29,6 +29,9 @@ public class FolderViewModel extends AndroidViewModel {
         return folderRepository.getFolderNotesCount(id);
     }
 
+    public LiveData<FolderWithNotes> getFolderWithNotesById(int id) {return folderRepository.getFolderWithNotesById(id);}
+
+
 
     public void insert(Folder folder) {
         folderRepository.insert(folder);
