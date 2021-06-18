@@ -2,8 +2,11 @@ package com.example.note_tech_geeks_android;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +28,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private int noteId;
@@ -33,8 +40,13 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
     private String audioPath;
     private double latidude,longitude;
     private GoogleMap mMap;
-    private SeekBar seekBar;
+    private SeekBar seekBarAudio;
     private ImageButton playButton;
+
+    private MediaPlayer mediaPlayer;
+    private AudioManager audioManager;
+    private boolean isRecordingPlaying = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +87,13 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
         findViewById(R.id.save_button_edit_note).setOnClickListener(v -> {
             saveThisNote();
         });
-        seekBar = findViewById(R.id.seek_bar_edit);
+
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
         playButton = findViewById(R.id.play_button_edit);
         playButton.setOnClickListener(v -> {
             playAudio();
         });
-
     }
 
     //implement logic to play audio here
@@ -90,7 +102,70 @@ public class EditNoteActivity extends AppCompatActivity implements OnMapReadyCal
             Toast.makeText(this, "No audio available", Toast.LENGTH_SHORT).show();
             return;
         }
-        //write logic below to play audio if path is available
+
+        if(!isRecordingPlaying){
+
+            isRecordingPlaying = true;
+            playButton.setImageResource(android.R.drawable.ic_media_pause);
+
+            mediaPlayer = new MediaPlayer();
+            try {
+                mediaPlayer.setDataSource(audioPath);
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            setSeekBar();
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    isRecordingPlaying = false;
+                    seekBarAudio.setProgress(0);
+                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                    Toast.makeText(EditNoteActivity.this, "Audio is Completed...", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Toast.makeText(EditNoteActivity.this, "Audio is playing...", Toast.LENGTH_SHORT).show();
+        }
+        else{
+
+            isRecordingPlaying = false;
+            playButton.setImageResource(android.R.drawable.ic_media_play);
+            mediaPlayer.pause();
+        }
+    }
+
+    private void setSeekBar(){
+
+        seekBarAudio = findViewById(R.id.seek_bar_edit);
+        seekBarAudio.setMax(mediaPlayer.getDuration());
+
+        seekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mediaPlayer.seekTo(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                seekBarAudio.setProgress(mediaPlayer.getCurrentPosition());
+            }
+        }, 0, 300);
     }
 
     private void saveThisNote(){
